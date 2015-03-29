@@ -4,25 +4,64 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get('/', function(request, response, next) {
-    response.send(userService.getAll());
+
+    userService.getAll(function(err, data){
+        response.send(data);
+    });
+
 });
 
 router.get('/:idUser', function(request, response, next){
-    response.send(userService.getOne(request.params.idUser));
+
+    userService.getOne(request.params.idUser, function(err, data){
+        response.send(data);
+    });
 });
 
 router.post('/', function(request, response){
 
-    var user = {
-        username: 'maxoumime',
-        name: 'Maxime',
-        password: "password"
-    };
+    var user = request.body;
 
-    var key = userService.add(user);
+    if(isUserValid(user)){
 
-    response.send(key);
-    //response.send(request.body);
+        userService.add(user, function(result){
+            if(result !== undefined)
+                response.send(result);
+            else {
+                response.statusCode = 500;
+                response.end();
+            }
+        });
+
+    }else {
+        response.statusCode = 400;
+        response.end();
+    }
+
 });
+
+router.delete('/:idUser', function(request, response){
+    var idUser = request.params.idUser;
+
+    userService.delete(idUser, function(result){
+
+        if(!result)
+            response.statusCode = 404;
+
+        response.end();
+    });
+});
+
+function isUserValid(user){
+
+    var valid = true;
+
+    valid &= user !== undefined;
+    valid &= user.id !== undefined;
+    valid &= user.name !== undefined;
+    valid &= user.password !== undefined;
+
+    return valid;
+}
 
 module.exports = router;

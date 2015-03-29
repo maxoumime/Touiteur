@@ -1,4 +1,5 @@
 var redis = require('redis');
+var async = require('async');
 
 var port = "6379";
 var host = "192.168.1.56";
@@ -13,18 +14,25 @@ var NEXT_TOUITE = "next_touite";
 
 // FONCTIONS
 
-function getNextTouiteIncr(){
-    return clientSubscriber.incr(NEXT_TOUITE);
+function generateKey(type, key, callback) {
+
+    async.series([
+        function(asyncCallback){
+            if (key !== undefined)
+                asyncCallback(type + ":" + key);
+            else {
+                db.getNextTouiteIncr(function(next){
+                    asyncCallback(type + ":" + next);
+                });
+            }
+        }
+    ], callback);
+
 }
 
-function getKey(type, key){
+function getSuffixKey(generatedKey){
 
-    if(key !== undefined)
-        return type + ":" + key;
-    else {
-        var next = getNextTouiteIncr();
-        return type + ":" + next;
-    }
+    return generatedKey.split(":")[1];
 }
 
 var db = {
@@ -35,42 +43,69 @@ var db = {
 
     //Fonctions
 
-    getAll: function(type){
-        var toto = clientSubscriber.smembers(type, function(err, data){
-            console.log(data);
-            return data;
+    getAll: function (type, callback) {
+
+        return clientSubscriber.smembers(type, callback);
+    },
+
+    getOne: function (type, key, callback) {
+
+        generateKey(type, key, function(generatedKey){
+
+            clientSubscriber.hgetall(generatedKey, callback);
+        });
+    },
+
+    add: function (type, data, callback, key) {
+
+        generateKey(type, key, function(generatedKey){
+
+            data.id = getSuffixKey(generatedKey);
+
+            async.parallel([
+                function(callback){
+                    clientPublisher.hmset(generatedKey, data, callback);
+                },
+                function(callback){
+                    clientPublisher.sadd(type, getSuffixKey(generatedKey), callback);
+                }
+            ], function(err, results){
+                if(results[0] == 'OK' && results[1] == "1"){
+                    callback(data);
+                }else callback(undefined);
+            });
         });
 
-        console.log(toto)
     },
 
-    getOne: function(type, key){
-        var result = clientSubscriber.hgetall(getKey(type, key), function(err, data){
-            console.log(data);
+    update: function (type, key, data, callback) {
+
+        generateKey(type, key, function(generatedKey){
+
+            clientPublisher.hmset(generatedKey, data, callback);
         });
-
-        return result;
     },
 
-    add: function(type, data, key){
+    delete: function (type, key, callback) {
 
-        var keyGenerated = getKey(type, key);
-
-        //clientPublisher.hmset(keyGenerated, JSON.stringify(data));
-        clientPublisher.hmset(keyGenerated, data);
-
-        clientPublisher.sadd(type, key);
-
-        return keyGenerated.split(":")[1];
+        generateKey(type, key, function(generatedKey){
+            async.parallel([
+                function (callback) {
+                    clientPublisher.del(generatedKey, callback)
+                },
+                function (callback) {
+                    clientPublisher.srem(type, getSuffixKey(generatedKey), callback)
+                }
+            ], function (err, results) {
+                callback(results[0] == 1 && results[1] == 1);
+            });
+        });
     },
 
-    update: function(type, key, data){
-
-    },
-
-    delete: function(type, key){
-        clientPublisher.del(getKey(type, key));
-        clientPublisher.srem(type, key);
+    getNextTouiteIncr: function(callback) {
+        clientSubscriber.incr(NEXT_TOUITE, function(err, data){
+            callback(data);
+        });
     }
 };
 

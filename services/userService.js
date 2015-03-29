@@ -1,48 +1,127 @@
 var db = require('./db');
+var async = require('async');
 
 var userService = {
 
     //Fonctions
-    getAll: function () {
-        return db.getAll(db.USER);
+    getAll: function(callback) {
+        return db.getAll(db.USER, callback);
     },
 
-    getOne: function (key) {
-        return db.getOne(db.USER, key);
+    getOne: function (key, callback) {
+        return db.getOne(db.USER, key, callback);
     },
 
-    add: function (data) {
-        return db.add(db.USER, data, data.username);
+    add: function (data, callback) {
+        return db.add(db.USER, data, callback, data.id);
     },
 
-    delete: function (key) {
-        db.delete(db.USER, key);
+    update: function(key, data, callback){
+        return db.update(db.USER, key, data, callback);
     },
 
-    follow: function (keyMe, keyTarget) {
-        var me = userService.getOne(keyMe);
-        var target = userService.getOne(keyTarget);
-
-        //Traitement
+    delete: function (key, callback) {
+        db.delete(db.USER, key, callback);
     },
 
-    unfollow: function(keyMe, keyTarget) {
-        var me = userService.getOne(keyMe);
-        var target = userService.getOne(keyTarget);
+    stalk: function (keyMe, keyTarget) {
+        async.parallel([
+            function(callback) {
+                userService.getOne(keyMe, callback)
+            },
+            function(callback){
+                userService.getOne(keyTarget, callback)
+            }
+        ], function(err, results){
 
-        //Traitement
+            //Traitement
+
+            var me = results[0];
+            var target = results[1];
+
+            if(me !== undefined && target !== undefined){
+
+                var stalking;
+                if(me.idStalking === undefined){
+                    stalking = [];
+                }else stalking = JSON.parse(me.idStalking);
+
+                stalking.push(target.id);
+
+                me.idStalking = JSON.stringify(stalking);
+
+                var stalkers;
+                if(target.idStalkers === undefined){
+                    stalkers = [];
+                }else stalkers = JSON.parse(target.idStalkers);
+
+                stalkers.push(me.id);
+
+                target.idStalkers = JSON.stringify(stalkers);
+
+                userService.update(me.id, me, function(result){});
+                userService.update(target.id, target, function(result){});
+            }
+        });
+
     },
 
-    getStalking: function(keyMe){
-        var me = userService.getOne(keyMe);
+    unstalk: function(keyMe, keyTarget) {
+        async.parallel([
+            function(callback) {
+                userService.getOne(keyMe, callback)
+            },
+            function(callback){
+                userService.getOne(keyTarget, callback)
+            }
+        ], function(err, results){
+            //Traitement
 
-        return me.idStalkers;
+            var me = results[0];
+            var target = results[1];
+
+            if(me !== undefined && target !== undefined){
+
+                var stalking;
+                if(me.idStalking === undefined){
+                    stalking = [];
+                }else stalking = JSON.parse(me.idStalking);
+
+                stalking.splice(stalking.indexOf(target.id), 1);
+
+                me.idStalking = JSON.stringify(stalking);
+
+                var stalkers;
+                if(target.idStalkers === undefined){
+                    stalkers = [];
+                }else stalkers = JSON.parse(target.idStalkers);
+
+                stalkers.splice(stalkers.indexOf(me.id), 1);
+
+                target.idStalkers = JSON.stringify(stalkers);
+
+                userService.update(me.id, me);
+                userService.update(target.id, target);
+            }
+        });
+
     },
 
-    getStalkers: function(keyMe){
-        var me = userService.getOne(keyMe);
+    getStalking: function(keyMe, callback){
+        userService.getOne(keyMe, function(err, me){
+            if(me !== undefined)
+                callback( me.idStalkers !== undefined ? JSON.parse(me.idStalkers) : [] );
+            else callback(undefined);
+        });
 
-        return me.idStalking;
+    },
+
+    getStalkers: function(keyMe, callback){
+        userService.getOne(keyMe, function(err, me){
+            if(me !== undefined)
+                callback(me.idStalking !== undefined ? JSON.parse(me.idStalking) : [] );
+            else callback(undefined);
+        });
 
     }
 };
