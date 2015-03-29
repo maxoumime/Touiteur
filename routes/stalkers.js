@@ -1,9 +1,12 @@
 var express = require('express');
+var userService = require('../services/userService')
 var router = express.Router();
 
 /* GET stalkers listing by id. */
 router.get('/:idUser', function(request, response, next) {
-    response.send('respond with a resource');
+    var idUser = request.params.idUser;
+
+    response.send(userService.getStalkers(idUser));
 });
 
 module.exports = router;

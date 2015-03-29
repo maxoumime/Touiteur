@@ -3,7 +3,9 @@ var router = express.Router();
 
 /* GET stalking listing for an id. */
 router.get('/:idUser', function(request, response, next) {
-    response.send('respond with a resource');
+    var idUser = request.params.idUser;
+
+    response.send(userService.getStalking(idUser));
 });
 
 module.exports = router;

@@ -1,15 +1,16 @@
 var express = require('express');
+var userService = require('../services/userService');
 var router = express.Router();
 
 /* Stalk someone. */
 router.post('/:idUser', function(request, response, next) {
-    console.log(request);
-    response.send(request.body);
+    var idUser = request.params.idUser;
+    response.send(userService.follow("maxoumime", idUser));
 });
 
 /* Un-stalk someone */
 router.delete('/:idUser', function(request, response, next) {
-    response.send('respond with a resource');
-});
+    var idUser = request.params.idUser;
+    response.send(userService.unfollow("maxoumime", idUser));});
 
 module.exports = router;
