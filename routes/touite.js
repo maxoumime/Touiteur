@@ -61,6 +61,8 @@ function isTouiteValid(touite){
     var valid = true;
 
     valid &= touite !== undefined;
+
+    //TODO authorId temp avant récupération cookie
     valid &= touite.authorId !== undefined;
     valid &= touite.content !== undefined;
 

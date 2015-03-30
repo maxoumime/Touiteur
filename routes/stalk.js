@@ -2,25 +2,27 @@ var express = require('express');
 var userService = require('../services/userService');
 var router = express.Router();
 
-var db = require('../services/db');
-
-//TODO DON'T STALK ME
-//TODO ETRANGE STALKERS & STALING INVERSES
+//TODO SEVERAL ERROR CODES (MYSELF, ALREADY, NON EXIST)
 
 /* Stalk someone. */
-router.post('/:idUser', function(request, response, next) {
+router.post('/:idUser', function(request, response) {
     var idUser = request.params.idUser;
-    response.send(userService.stalk("maxoumime", idUser));
+    userService.stalk("maxoumime", idUser, function(err, result){
+        if(result !== "OK"){
+            response.statusCode = 404;
+        }
+        response.end();    });
 });
 
 /* Un-stalk someone */
-router.delete('/:idUser', function(request, response, next) {
+router.delete('/:idUser', function(request, response) {
     var idUser = request.params.idUser;
-    response.send(userService.unstalk("maxoumime", idUser));
-});
-
-router.get('/', function(request, response){
-    response.send(db.getNextTouiteIncr());
+    userService.unstalk("maxoumime", idUser, function(err, result){
+        if(result !== "OK"){
+            response.statusCode = 404;
+        }
+        response.end();
+    });
 });
 
 module.exports = router;

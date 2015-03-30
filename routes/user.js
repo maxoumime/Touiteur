@@ -2,6 +2,8 @@ var express = require('express');
 var userService = require('../services/userService');
 var router = express.Router();
 
+//TODO UPDATE USER
+
 /* GET users listing. */
 router.get('/', function(request, response, next) {
 
