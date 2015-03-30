@@ -2,8 +2,8 @@ var redis = require('redis');
 var async = require('async');
 
 var port = "6379";
-//var host = "192.168.1.56";
-var host = "127.0.0.1";
+var host = "192.168.1.56";
+//var host = "127.0.0.1";
 
 var clientPublisher = redis.createClient(port, host);
 var clientSubscriber = redis.createClient(port, host);

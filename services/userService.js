@@ -136,6 +136,13 @@ var userService = {
             else callback(undefined);
         });
 
+    },
+
+    doesExist: function(username, callback){
+        userService.getOne(username, function(err, data){
+
+            callback( !(data === undefined || data === null) );
+        })
     }
 };
 
