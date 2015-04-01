@@ -6,10 +6,9 @@ var router = express.Router();
 /* GET stalkers listing by id. */
 router.get('/:idUser', function(request, response, next) {
 
-    var token = request.body.token;
-    var user = authService.getUser(token);
+    var token = request.query.token;
 
-    if(token !== undefined && user !== undefined) {
+    if(token !== undefined && authService.isConnectedUser(token)) {
 
         var idUser = request.params.idUser;
 

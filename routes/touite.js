@@ -3,14 +3,13 @@ var touiteService = require('../services/touiteService');
 var authService = require('../services/authService');
 var router = express.Router();
 
-//TODO FIND
+//TODO FIND HASHTAG
 //TODO EN SE BASANT SUR LES STALKING
 router.get('/', function(request, response) {
 
     var token = request.body.token;
-    var user = authService.getUser(token);
 
-    if(token !== undefined && user !== undefined) {
+    if(token !== undefined && authService.isConnectedUser(token)) {
 
         touiteService.getAll(function(err,data){
             response.send(data);
@@ -25,9 +24,8 @@ router.get('/', function(request, response) {
 router.get('/:idTouite', function(request, response) {
 
     var token = request.body.token;
-    var user = authService.getUser(token);
 
-    if(token !== undefined && user !== undefined) {
+    if(token !== undefined && authService.isConnectedUser(token)) {
         touiteService.getOne(request.params.idTouite, function(err, data){
 
             if(data != undefined)
@@ -48,9 +46,10 @@ router.get('/:idTouite', function(request, response) {
 router.post('/', function(request, response){
 
     var token = request.body.token;
-    var user = authService.getUser(token);
 
-    if(token !== undefined && user !== undefined) {
+    if(token !== undefined && authService.isConnectedUser(token)) {
+
+        var user = authService.getUser(token);
 
         var touite = request.body;
 
@@ -81,9 +80,10 @@ router.post('/', function(request, response){
 router.delete('/:idTouite', function(request, response){
 
     var token = request.body.token;
-    var user = authService.getUser(token);
 
-    if(token !== undefined && user !== undefined) {
+    if(token !== undefined && authService.isConnectedUser(token)) {
+
+        var user = authService.getUser(token);
 
         var idTouite = request.params.idTouite;
 
@@ -115,7 +115,7 @@ function isTouiteValid(touite){
     var valid = true;
 
     valid &= touite !== undefined;
-    valid &= touite.content !== undefined;
+    valid &= touite.content !== undefined && touite.content.length > 0;
 
     return valid;
 }

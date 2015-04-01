@@ -6,9 +6,12 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var cors = require('cors');
 
+var login = require('./routes/login');
+var logout = require('./routes/logout');
 var routes = require('./routes/index');
 var user = require('./routes/user');
 var touite = require('./routes/touite');
+var motdiese = require('./routes/motdiese');
 var stalk = require('./routes/stalk');
 var stalkers = require('./routes/stalkers');
 var stalking = require('./routes/stalking');
@@ -30,8 +33,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
 app.use('/', routes);
+app.use('/login', login);
+app.use('/logout', logout);
 app.use('/user', user);
 app.use('/touite', touite);
+app.use('/motdiese', motdiese);
 app.use('/stalk', stalk);
 app.use('/stalkers', stalkers);
 app.use('/stalking', stalking);

@@ -1,30 +1,49 @@
-var db = require('./db');
+var db = require('./db/db');
+var hashdb = require('./db/hashdb');
 var async = require('async');
 
 var userService = {
 
     //Fonctions
     getAll: function(callback) {
-        return db.getAll(db.USER, callback);
+
+        if(callback === undefined) callback = nocallback;
+
+        return hashdb.getAll(db.USER, callback);
     },
 
     getOne: function (key, callback) {
-        return db.getOne(db.USER, key, callback);
+
+        if(callback === undefined) callback = nocallback;
+
+        return hashdb.getOne(db.USER, key, callback);
     },
 
     add: function (data, callback) {
-        return db.add(db.USER, data, callback, data.id);
+
+        if(callback === undefined) callback = nocallback;
+
+        return hashdb.add(db.USER, data, callback, data.id);
     },
 
     update: function(key, data, callback){
-        return db.update(db.USER, key, data, callback);
+
+        if(callback === undefined) callback = nocallback;
+
+        return hashdb.update(db.USER, key, data, callback);
     },
 
     delete: function (key, callback) {
-        db.delete(db.USER, key, callback);
+
+        if(callback === undefined) callback = nocallback;
+
+        hashdb.delete(db.USER, key, callback);
     },
 
     stalk: function (keyMe, keyTarget, callback) {
+
+        if(callback === undefined) callback = nocallback;
+
         async.parallel([
             function(callback) {
                 userService.getOne(keyMe, callback)
@@ -72,6 +91,9 @@ var userService = {
     },
 
     unstalk: function(keyMe, keyTarget, callback) {
+
+        if(callback === undefined) callback = nocallback;
+
         async.parallel([
             function(ayncCallback) {
                 userService.getOne(keyMe, ayncCallback)
@@ -121,6 +143,9 @@ var userService = {
     },
 
     getStalking: function(keyMe, callback){
+
+        if(callback === undefined) callback = nocallback;
+
         userService.getOne(keyMe, function(err, me){
             if(me !== undefined)
                 callback( me.idStalking !== undefined ? JSON.parse(me.idStalking) : [] );
@@ -130,6 +155,9 @@ var userService = {
     },
 
     getStalkers: function(keyMe, callback){
+
+        if(callback === undefined) callback = nocallback;
+
         userService.getOne(keyMe, function(err, me){
             if(me !== undefined)
                 callback(me.idStalkers !== undefined ? JSON.parse(me.idStalkers) : [] );
@@ -138,12 +166,28 @@ var userService = {
 
     },
 
+    getTouites: function(keyMe, callback){
+
+        if(callback === undefined) callback = nocallback;
+
+        userService.getOne(keyMe, function(err, me){
+            if(me !== undefined)
+                callback(me.idTouites !== undefined ? JSON.parse(me.idTouites) : [] );
+            else callback(undefined);
+        });
+    },
+
     doesExist: function(username, callback){
+
+        if(callback === undefined) callback = nocallback;
+
         userService.getOne(username, function(err, data){
 
-            callback( !(data === undefined || data === null) );
+            callback( data === undefined || data === null );
         })
     }
 };
+
+function nocallback(){}
 
 module.exports = userService;

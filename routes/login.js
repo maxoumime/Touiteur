@@ -6,11 +6,10 @@ router.post('/', function(request, response) {
 
     var userlogin = request.body;
 
-    authService.connect(userlogin.username, userlogin.password, function(cookie){
+    authService.connect(userlogin.username, userlogin.password, function(token){
 
-        if(cookie !== undefined) {
-            //response.cookie(authService.cookieName, cookie, {maxAge: 48 * 60 * 60});
-            response.send(cookie);
+        if(token !== undefined) {
+            response.send(token);
         }
         else response.statusCode = 403;
 

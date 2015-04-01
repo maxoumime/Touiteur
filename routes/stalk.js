@@ -9,12 +9,13 @@ var router = express.Router();
 router.post('/:idUser', function(request, response) {
 
     var token = request.body.token;
-    var user = authService.getUser(token);
 
-    if(token !== undefined && user !== undefined) {
+    if(token !== undefined && authService.isConnectedUser(token)) {
+
+        var user = authService.getUser(token);
 
         var idUser = request.params.idUser;
-        userService.stalk("maxoumime", idUser, function (err, result) {
+        userService.stalk(user, idUser, function (err, result) {
             if (result !== "OK") {
                 response.statusCode = 404;
             }
@@ -30,12 +31,13 @@ router.post('/:idUser', function(request, response) {
 router.delete('/:idUser', function(request, response) {
 
     var token = request.body.token;
-    var user = authService.getUser(token);
 
-    if(token !== undefined && user !== undefined) {
+    if(token !== undefined && authService.isConnectedUser(token)) {
+
+        var user = authService.getUser(token);
 
         var idUser = request.params.idUser;
-        userService.unstalk("maxoumime", idUser, function(err, result){
+        userService.unstalk(user, idUser, function(err, result){
             if(result !== "OK"){
                 response.statusCode = 404;
             }

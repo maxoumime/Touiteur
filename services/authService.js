@@ -1,9 +1,7 @@
 var userService = require('./userService');
 var crypto = require('crypto');
 
-var cookieUser = {};
-
-//var cookieName = "TOKEN";
+var tokenUser = {};
 
 var algorithm = 'aes256';
 var key = 'T0U!T&UR_!S_S&CUR&';
@@ -12,9 +10,10 @@ var key = 'T0U!T&UR_!S_S&CUR&';
 
 var authService = {
 
-    //cookieName: cookieName,
-
     connect: function(username, password, callback){
+
+        if(callback === undefined) callback = nocallback;
+
         userService.getOne(username, function(err, data){
 
             if(data !== null && data !== undefined){
@@ -22,7 +21,7 @@ var authService = {
 
                     var encrypted = authService.encrypt(username);
 
-                    cookieUser[encrypted] = username;
+                    tokenUser[encrypted] = username;
 
                     callback(encrypted);
                 }
@@ -32,8 +31,8 @@ var authService = {
         });
     },
 
-    getUser: function(cookie){
-        return cookieUser[cookie];
+    getUser: function(token){
+        return tokenUser[token];
     },
 
     encrypt: function(text){
@@ -42,10 +41,22 @@ var authService = {
         return encrypted;
     },
 
-    clearCookie: function(cookie){
+    clearToken: function(token){
 
-        delete cookieUser[cookie];
+        var exists = authService.isConnectedUser(token);
+
+        if(exists)
+            delete tokenUser[token];
+
+        return exists;
+    },
+
+    isConnectedUser: function(token){
+
+        return authService.getUser(token) !== undefined;
     }
 };
+
+function nocallback(){}
 
 module.exports = authService;

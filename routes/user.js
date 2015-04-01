@@ -1,28 +1,8 @@
 var express = require('express');
 var userService = require('../services/userService');
+var touiteService = require('../services/touiteService');
 var authService = require('../services/authService');
 var router = express.Router();
-
-//TODO UPDATE USER
-
-/*
-router.get('/', function(request, response, next) {
-
-    userService.getAll(function(err, data){
-        response.send(data);
-    });
-
-});
-*/
-
-/*
-router.get('/:idUser', function(request, response, next){
-
-    userService.getOne(request.params.idUser, function(err, data){
-        response.send(data);
-    });
-});
-*/
 
 router.post('/', function(request, response){
 
@@ -36,9 +16,10 @@ router.post('/', function(request, response){
                 userPost.password = authService.encrypt(userPost.password);
 
                 userService.add(userPost, function (result) {
-                    if (result !== undefined)
+                    if (result !== undefined) {
+                        delete result.password;
                         response.send(result);
-                    else {
+                    }else {
                         response.statusCode = 500;
                         response.end();
                     }
@@ -57,13 +38,73 @@ router.post('/', function(request, response){
 
 });
 
-//TODO SUPPRIMER TOUITES CORRESPONDANTS
+router.put('/:idUser', function(request, response){
+
+    var token = request.params.token;
+
+    if(token !== undefined && authService.isConnectedUser(token)){
+
+        var user = authService.getUser(token);
+        var newUser = request.body;
+
+
+        userService.getOne(user, function(userDB){
+
+            if(userDB !== null){
+
+                var mergedUser = userDB;
+
+                mergedUser.name  = newUser.name !== undefined ?  newUser.name : userDB.name;
+                mergedUser.email = newUser.email !== undefined ? newUser.email : userDB.email;
+
+                if(newUser.oldPassword !== undefined) {
+
+                    var encryptedOldPassword = authService.encrypt(newUser.oldPassword);
+                    if( encryptedOldPassword === userDB.password )
+                        mergedUser.password = encryptedOldPassword;
+                }
+
+                userService.update(user, mergedUser, function(){
+
+                    delete mergedUser.password;
+                    response.send(mergedUser);
+                });
+            }else response.statusCode = 404;
+        });
+
+
+    }else{
+        response.statusCode = 403;
+        response.end();
+    }
+});
+
 router.delete('/', function(request, response){
 
     var token = request.body.token;
-    var user = authService.getUser(token);
 
-    if(token !== undefined && user !== undefined) {
+    if(token !== undefined && authService.isConnectedUser(token)) {
+
+        var user = authService.getUser(token);
+
+        userService.getOne(user, function(me){
+
+           if(me !== null){
+
+               var touites = me.idTouites !== undefined ? JSON.parse(me.idTouites) : [];
+               for(var touiteIndex in touites)
+                   touiteService.delete(touites[touiteIndex], function(){});
+
+               var stalkers = me.idStalkers !== undefined ? JSON.parse(me.idStalkers) : [];
+               for(var stalkerIndex in stalkers)
+                    userService.unstalk(stalkers[stalkerIndex], user, function(){});
+
+               var stalking = me.idStalking !== undefined ? JSON.parse(me.idStalking) : [];
+               for(var stalkingIndex in stalking)
+                    userService.unstalk(user, stalking[stalkingIndex], function(){});
+           }
+
+        });
 
         userService.delete(user, function(result){
 
@@ -100,6 +141,8 @@ function isUserValid(user){
     valid &= user.id !== undefined;
     valid &= user.name !== undefined;
     valid &= user.password !== undefined;
+    valid &= ( user.email !== undefined &&
+            user.email.match(/[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}/) !== null);
 
     return valid;
 }
