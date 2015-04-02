@@ -3,7 +3,6 @@ var touiteService = require('../services/touiteService');
 var authService = require('../services/authService');
 var router = express.Router();
 
-//TODO FIND HASHTAG
 //TODO EN SE BASANT SUR LES STALKING
 router.get('/', function(request, response) {
 
