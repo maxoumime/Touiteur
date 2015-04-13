@@ -57,7 +57,7 @@ router.post('/', function(request, response){
 
         userService.doesExist(userPost.id, function(does){
 
-            if(does) {
+            if(!does) {
                 userPost.password = authService.encrypt(userPost.password);
 
                 userService.add(userPost, function (result) {

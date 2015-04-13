@@ -2,8 +2,8 @@ var redis = require('redis');
 var async = require('async');
 
 var port = "6379";
-//var host = "192.168.1.56";
-var host = "127.0.0.1";
+var host = "192.168.1.19";
+//var host = "127.0.0.1";
 
 var clientSetter = redis.createClient(port, host);
 var clientGetter = redis.createClient(port, host);
@@ -41,6 +41,22 @@ var db = {
     getNextTouiteIncr: function(callback) {
         clientGetter.incr(NEXT_TOUITE, function(err, data){
             callback(data);
+        });
+    },
+
+    delete: function (type, key, callback) {
+
+        db.generateKey(type, key, function(generatedKey){
+            async.parallel([
+                function (callback) {
+                    clientSetter.del(generatedKey, callback)
+                },
+                function (callback) {
+                    clientSetter.srem(type, db.getSuffixKey(generatedKey), callback)
+                }
+            ], function (err, results) {
+                callback(results[0] == 1 && results[1] == 1);
+            });
         });
     },
 

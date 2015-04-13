@@ -5,7 +5,6 @@ var userService = require('../services/userService');
 var authService = require('../services/authService');
 var router = express.Router();
 
-//TODO EN SE BASANT SUR LES STALKING
 router.get('/', function(request, response) {
 
     var token = request.query.token;
@@ -34,7 +33,7 @@ router.get('/', function(request, response) {
                     });
                 }, function(err){
 
-                    var touitesRetour = [];
+                    var touites = [];
 
                     async.each(touitesId, function(touiteId, callback){
 
@@ -42,13 +41,22 @@ router.get('/', function(request, response) {
 
                             if(touite !== undefined && touite !== null){
                                 delete touite.motsdiese;
-                                touitesRetour = touitesRetour.concat(touite);
+                                touites = touites.concat(touite);
                             }
 
                             callback();
                         })
 
                     }, function(err){
+
+                        var pagination = request.query.pagination;
+
+                        if(pagination === undefined || isNaN(pagination))
+                            pagination = 10;
+
+                        var touitesRetour = touites;
+                        if(touites.length > pagination)
+                            touitesRetour = touites.slice(Math.max(touites.length - pagination, 1));
 
                         response.send(touitesRetour);
                     });
