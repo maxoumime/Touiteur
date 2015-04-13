@@ -8,7 +8,6 @@ var cors = require('cors');
 
 var login = require('./routes/login');
 var logout = require('./routes/logout');
-var routes = require('./routes/index');
 var user = require('./routes/user');
 var touite = require('./routes/touite');
 var motdiese = require('./routes/motdiese');
@@ -27,12 +26,11 @@ app.set('view engine', 'jade');
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
-app.use('/', routes);
 app.use('/login', login);
 app.use('/logout', logout);
 app.use('/user', user);

@@ -1,0 +1,23 @@
+<div class="row">
+    <form ng-submit="login()">
+        <div class="row form-inline">
+            <div class="form-group col-lg-6">
+                <input type="text" class="form-control" id="username" placeholder="Nom d'utilisateur" ng-model="formLoginData.username">
+            </div>
+            <div class="form-group col-lg-6">
+                <input type="password" class="form-control" id="password" placeholder="Mot de passe" ng-model="formLoginData.password">
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-lg-3">
+                <button type="button" class="btn btn-link" ng-click="register()">S'inscrire</button>
+            </div>
+
+            <div class="col-lg-offset-6 col-lg-3 right">
+                <button type="submit" class="btn btn-default">Se connecter !</button>
+            </div>
+        </div>
+    </form>
+</div>

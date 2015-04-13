@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head lang="fr">
+    <meta charset="UTF-8">
+    <title>Touiteur</title>
+
+    <link rel="stylesheet" href="javascript/libs/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="javascript/libs/bootstrap/dist/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="javascript/libs/toastr/toastr.min.css"/>
+
+    <script src="javascript/libs/jquery/dist/jquery.min.js"></script>
+    <script src="javascript/libs/angular/angular.min.js"></script>
+    <script src="javascript/libs/angular-route/angular-route.min.js"></script>
+    <script src="javascript/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="javascript/libs/angular-strap/dist/angular-strap.min.js"></script>
+    <script src="javascript/libs/toastr/toastr.min.js"></script>
+
+    <script src="javascript/app.js"></script>
+    <script src="javascript/login/loginModule.js"></script>
+    <script src="javascript/login/loginCtrl.js"></script>
+    <script src="javascript/login/loginService.js"></script>
+</head>
+
+<body ng-app="TouiteurApp">
+    <div class="container container-fluid">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1>TOUITEUR (not the same as the blue bird)</h1>
+            </div>
+        </div>
+
+        <div ng-view></div>
+
+    </div>
+
+</body>
+</html>
