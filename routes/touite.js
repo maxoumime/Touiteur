@@ -21,20 +21,37 @@ router.get('/', function(request, response) {
                 //On veut aussi avoir ses propres touites
                 data.push(user);
 
-
-                var touitesRetour = [];
+                var touitesId = [];
 
                 async.each(data, function(userId, callback){
 
-                    userService.getTouites(userId, function(touitesId){
+                    userService.getTouites(userId, function(touitesIdStalk){
 
-                        if(touitesId !== undefined)
-                            touitesRetour = touitesRetour.concat(touitesId);
+                        if(touitesIdStalk !== undefined)
+                            touitesId = touitesId.concat(touitesIdStalk);
 
                         callback();
                     });
                 }, function(err){
-                   response.send(touitesRetour);
+
+                    var touitesRetour = [];
+
+                    async.each(touitesId, function(touiteId, callback){
+
+                        touiteService.getOne(touiteId, function(err, touite){
+
+                            if(touite !== undefined && touite !== null){
+                                delete touite.motsdiese;
+                                touitesRetour = touitesRetour.concat(touite);
+                            }
+
+                            callback();
+                        })
+
+                    }, function(err){
+
+                        response.send(touitesRetour);
+                    });
                 });
 
             }else{
@@ -51,7 +68,7 @@ router.get('/', function(request, response) {
 
 router.get('/:idTouite', function(request, response) {
 
-    var token = request.body.token;
+    var token = request.query.token;
 
     if(token !== undefined && authService.isConnectedUser(token)) {
         touiteService.getOne(request.params.idTouite, function(err, data){
@@ -88,6 +105,8 @@ router.post('/', function(request, response){
             touiteService.add(touite, function(touiteAdded){
 
                 if(touiteAdded !== undefined) {
+
+                    delete touiteAdded.motsdiese;
                     response.send(touiteAdded);
                 } else {
                     response.statusCode = 500;
