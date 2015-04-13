@@ -4,6 +4,51 @@ var touiteService = require('../services/touiteService');
 var authService = require('../services/authService');
 var router = express.Router();
 
+router.get('/:id', function(request, response){
+
+    var token = request.query.token;
+
+    if(token !== undefined && authService.isConnectedUser(token)){
+
+        var idUser = request.params.id;
+
+        userService.getOne(idUser, function(err, data){
+
+            delete data.password;
+
+            response.send(data);
+
+        });
+
+    }else{
+        response.statusCode = 403;
+        response.end();
+    }
+
+});
+
+router.get('/touites/:idUser', function(request, response){
+
+    var token = request.query.token;
+
+    if(token !== undefined && authService.isConnectedUser(token)){
+
+        var idUser = request.params.idUser;
+
+        userService.getTouites(idUser, function(touitesId){
+
+            response.send(touitesId);
+
+        });
+
+    }else{
+        response.statusCode = 403;
+        response.end();
+    }
+
+});
+
+
 router.post('/', function(request, response){
 
     var userPost = request.body;
@@ -38,7 +83,7 @@ router.post('/', function(request, response){
 
 });
 
-router.put('/:idUser', function(request, response){
+router.put('/', function(request, response){
 
     var token = request.params.token;
 
@@ -46,7 +91,6 @@ router.put('/:idUser', function(request, response){
 
         var user = authService.getUser(token);
         var newUser = request.body;
-
 
         userService.getOne(user, function(userDB){
 

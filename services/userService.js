@@ -23,6 +23,8 @@ var userService = {
 
         if(callback === undefined) callback = nocallback;
 
+        data.registrationDate = Date.now();
+
         return hashdb.add(db.USER, data, callback, data.id);
     },
 
@@ -183,7 +185,7 @@ var userService = {
 
         userService.getOne(username, function(err, data){
 
-            callback( data === undefined || data === null );
+            callback( data !== undefined && data !== null );
         })
     }
 };

@@ -20,13 +20,6 @@ var touiteService = {
         return hashdb.getOne(db.TOUITE, key, callback);
     },
 
-    find: function(keyword, callback) {
-
-        if(callback === undefined) callback = nocallback;
-
-        return [];
-    },
-
     add: function(data, callback){
 
         if(callback === undefined) callback = nocallback;

@@ -1,17 +1,46 @@
 var express = require('express');
+var async = require('async');
 var touiteService = require('../services/touiteService');
+var userService = require('../services/userService');
 var authService = require('../services/authService');
 var router = express.Router();
 
 //TODO EN SE BASANT SUR LES STALKING
 router.get('/', function(request, response) {
 
-    var token = request.body.token;
+    var token = request.query.token;
 
     if(token !== undefined && authService.isConnectedUser(token)) {
 
-        touiteService.getAll(function(err,data){
-            response.send(data);
+        var user = authService.getUser(token);
+
+        userService.getStalking(user, function(data){
+
+            if(data !== undefined){
+
+                //On veut aussi avoir ses propres touites
+                data.push(user);
+
+
+                var touitesRetour = [];
+
+                async.each(data, function(userId, callback){
+
+                    userService.getTouites(userId, function(touitesId){
+
+                        if(touitesId !== undefined)
+                            touitesRetour = touitesRetour.concat(touitesId);
+
+                        callback();
+                    });
+                }, function(err){
+                   response.send(touitesRetour);
+                });
+
+            }else{
+                response.statusCode = 500;
+                response.end();
+            }
         });
 
     }else{
@@ -45,6 +74,7 @@ router.get('/:idTouite', function(request, response) {
 router.post('/', function(request, response){
 
     var token = request.body.token;
+    delete request.body.token;
 
     if(token !== undefined && authService.isConnectedUser(token)) {
 
@@ -57,9 +87,9 @@ router.post('/', function(request, response){
         if(isTouiteValid(touite)){
             touiteService.add(touite, function(touiteAdded){
 
-                if(touiteAdded !== undefined)
+                if(touiteAdded !== undefined) {
                     response.send(touiteAdded);
-                else {
+                } else {
                     response.statusCode = 500;
                     response.end();
                 }
