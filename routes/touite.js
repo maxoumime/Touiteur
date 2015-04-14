@@ -110,17 +110,24 @@ router.post('/', function(request, response){
         touite.authorId = user;
 
         if(isTouiteValid(touite)){
-            touiteService.add(touite, function(touiteAdded){
 
-                if(touiteAdded !== undefined) {
+            if(touite.content.length <= 140) {
 
-                    delete touiteAdded.motsdiese;
-                    response.send(touiteAdded);
-                } else {
-                    response.statusCode = 500;
-                    response.end();
-                }
-            });
+                touiteService.add(touite, function (touiteAdded) {
+
+                    if (touiteAdded !== undefined) {
+
+                        delete touiteAdded.motsdiese;
+                        response.send(touiteAdded);
+                    } else {
+                        response.statusCode = 500;
+                        response.end();
+                    }
+                });
+            }else{
+                response.statusCode = 509;
+                response.end();
+            }
         }else {
             response.statusCode = 400;
             response.end();

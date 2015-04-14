@@ -8,6 +8,10 @@ var app = angular.module('TouiteurApp', [
     'register.module'
 ]);
 
+toastr.options = {
+    "positionClass": "toast-bottom-right",
+};
+
 /**
  * Main configuration
  */
