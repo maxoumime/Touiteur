@@ -4,7 +4,13 @@
 
 loginModule.controller('LoginCtrl', ['$scope', '$rootScope', '$location', '$routeParams', '$http', 'loginService', function($scope, $rootScope, $location, $routeParams, $http, loginService) {
 
-    $scope.formLoginData = {};
+    if($rootScope.token !== undefined)
+        $location.path('/');
+
+    $scope.formLoginData = {
+        username: "",
+        password: ""
+    };
 
     $scope.login = function(){
 

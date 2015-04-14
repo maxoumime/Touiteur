@@ -55,25 +55,32 @@ router.post('/', function(request, response){
 
     if (isUserValid(userPost)) {
 
-        userService.doesExist(userPost.id, function(does){
+        if(isEmailValid(userPost.email)) {
 
-            if(!does) {
-                userPost.password = authService.encrypt(userPost.password);
+            userService.doesExist(userPost.id, function (does) {
 
-                userService.add(userPost, function (result) {
-                    if (result !== undefined) {
-                        delete result.password;
-                        response.send(result);
-                    }else {
-                        response.statusCode = 500;
-                        response.end();
-                    }
-                });
-            }else{
-                response.statusCode = 403;
-                response.end();
-            }
-        });
+                if (!does) {
+                    userPost.password = authService.encrypt(userPost.password);
+
+                    userService.add(userPost, function (result) {
+                        if (result !== undefined) {
+                            delete result.password;
+                            response.send(result);
+                        } else {
+                            response.statusCode = 500;
+                            response.end();
+                        }
+                    });
+                } else {
+                    response.statusCode = 403;
+                    response.end();
+                }
+            });
+
+        }else{
+            response.statusCode = 418;
+            response.end();
+        }
 
 
     } else {
@@ -185,10 +192,15 @@ function isUserValid(user){
     valid &= user.id !== undefined;
     valid &= user.name !== undefined;
     valid &= user.password !== undefined;
-    valid &= ( user.email !== undefined &&
-            user.email.match(/[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}/) !== null);
+    valid &= isEmailValid(user.email);
 
     return valid;
+}
+
+function isEmailValid(email){
+
+    return ( email !== undefined &&
+    email.match(/[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}/) !== null);
 }
 
 module.exports = router;
