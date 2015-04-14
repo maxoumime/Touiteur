@@ -24,6 +24,9 @@ var authService = {
                     tokenUser[encrypted] = username;
 
                     callback(encrypted);
+                }else{
+
+                    callback(undefined);
                 }
             }else{
                 callback(undefined);

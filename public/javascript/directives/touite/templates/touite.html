@@ -1,0 +1,28 @@
+<div class="col-lg-offset-2 col-lg-8">
+    <div class="panel panel-default">
+        <div class="panel-body">
+
+            <div class="row">
+
+                <div class="col-lg-1">
+                    <a class="classy" href="#/user/{{content.authorId}}">
+                        <img class="img-thumbnail avatar" src="images/avatar.png"/>
+                    </a>
+                </div>
+                <div class="col-lg-4">
+                    <a class="classy" href="#/user/{{content.authorId}}">{{content.authorId}}</a>
+                </div>
+                <div class="col-lg-offset-3 col-lg-4 text-right">
+                    {{ content.time | date: 'dd/MM/yyyy HH:mm:ss' }}
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <touite-content content="content.content"></touite-content>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

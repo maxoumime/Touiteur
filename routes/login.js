@@ -12,10 +12,10 @@ router.post('/', function(request, response) {
 
             if (token !== undefined) {
                 response.send(token);
+            }else {
+                response.statusCode = 403;
+                response.end();
             }
-            else response.statusCode = 403;
-
-            response.end();
         });
     }else{
         response.statusCode = 400;

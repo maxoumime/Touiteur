@@ -1,8 +1,25 @@
 body {
-  padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
+}
+
+a.classy{
+
+  color: black;
+  font-weight: bold;
+}
+
+img.avatar{
+
+  height: 54px;
+  width: 54px;
+  max-width: none;
+}
+
+.inline{
+
+  display: inline;
 }
