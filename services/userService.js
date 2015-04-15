@@ -173,7 +173,7 @@ var userService = {
         if(callback === undefined) callback = nocallback;
 
         userService.getOne(keyMe, function(err, me){
-            if(me !== undefined)
+            if(me !== undefined && me !== null)
                 callback(me.idTouites !== undefined ? JSON.parse(me.idTouites) : [] );
             else callback(undefined);
         });

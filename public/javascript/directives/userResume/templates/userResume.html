@@ -1,0 +1,21 @@
+<div class="well well-lg">
+    <div class="row">
+        <div class="col-lg-3">
+            <img class="img-thumbnail avatar" src="images/avatar.png"/>
+        </div>
+        <div class="col-lg-3">
+            <h3 class="inline">{{user.id}}</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            Touites <p class="text-center">{{user.idTouites.length || 0}}</p>
+        </div>
+        <div class="col-lg-4">
+            Stalking <p class="text-center"> {{user.stalking.length || 0}} </p>
+        </div>
+        <div class="col-lg-4">
+            Stalkers <p class="text-center"> {{user.stalkers.length || 0}} </p>
+        </div>
+    </div>
+</div>

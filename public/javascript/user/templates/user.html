@@ -1,0 +1,20 @@
+<div class="row">
+
+    <div class="col-lg-3">
+        <div class="row">
+            <user-resume user="user"></user-resume>
+        </div>
+        <div class="row" ng-hide="username === user.id">
+            <button class="btn btn-success" ng-show="!isStalking()">Stalk</button>
+            <button class="btn btn-danget" ng-show="isStalking()">Unstalk</button>
+        </div>
+    </div>
+
+    <div class="col-lg-9">
+        <div class="row" ng-repeat="touite in touites | orderBy:'-time'">
+            <touite content="touite" username="touite.authorId" delete-touite="deleteTouite(touite.id)"></touite>
+        </div>
+
+    </div>
+
+</div>

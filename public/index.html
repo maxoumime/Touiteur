@@ -22,6 +22,7 @@
 
     <script src="javascript/directives/touite/touite.js"></script>
     <script src="javascript/directives/touite/touiteContent.js"></script>
+    <script src="javascript/directives/userResume/userResume.js"></script>
 
     <script src="javascript/login/loginModule.js"></script>
     <script src="javascript/login/loginCtrl.js"></script>
@@ -31,15 +32,19 @@
     <script src="javascript/register/registerCtrl.js"></script>
     <script src="javascript/register/registerService.js"></script>
 
-    <script src="javascript/accueil/accueilModule.js"></script>
-    <script src="javascript/accueil/accueilCtrl.js"></script>
-    <script src="javascript/accueil/accueilService.js"></script>
+    <script src="javascript/user/userModule.js"></script>
+    <script src="javascript/user/userCtrl.js"></script>
+    <script src="javascript/user/userService.js"></script>
+
+    <script src="javascript/touitetimeline/touiteTimelineModule.js"></script>
+    <script src="javascript/touitetimeline/touiteTimelineCtrl.js"></script>
+    <script src="javascript/touitetimeline/touiteTimelineService.js"></script>
 
 </head>
 
 <body ng-app="TouiteurApp">
 
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-default" ng-controller="NavbarCtrl">
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -55,8 +60,8 @@
                     <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
                     <li><a href="#">Link</a></li>
                 </ul>-->
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">Logout</a></li>
+                <ul class="nav navbar-nav navbar-right" ng-show="isConnected()">
+                    <li><a class="btn btn-link" ng-click="logout()">Logout</a></li>
                 </ul>
             </div>
         </div>

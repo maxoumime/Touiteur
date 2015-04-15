@@ -1,4 +1,4 @@
-loginModule.factory('accueilService', ['$http', '$rootScope', '$location', function ($http, $rootScope, $location){
+touitetimelineModule.factory('touiteTimelineService', ['$http', '$rootScope', '$location', function ($http, $rootScope, $location){
     var factory = {};
 
     factory.postTouite = function(touite){
@@ -17,6 +17,23 @@ loginModule.factory('accueilService', ['$http', '$rootScope', '$location', funct
                     toastr.error("Longueur du Touite invalide");
                 else toastr.error("Veuillez réessayer ultérieurement.", "Erreur de connexion");
 
+            });
+    };
+
+    factory.getTouite = function(id){
+
+        return $http.get(host+'/touite/'+id+"?token="+$rootScope.token)
+
+            .error(function(data, status){
+                if(status === 403){
+                    toastr.error("Votre connexion a expiré", "Non authorisé");
+                    delete $rootScope.token;
+                    $location.path('/login');
+                }else if(status === 404){
+                    toastr.error("Utilisateur introuvable");
+                    $location.path('/');
+                }
+                else toastr.error("Veuillez réessayer ultérieurement.", "Erreur de connexion");
             });
     };
 

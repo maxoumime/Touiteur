@@ -14,9 +14,24 @@ router.get('/:id', function(request, response){
 
         userService.getOne(idUser, function(err, data){
 
-            delete data.password;
+            if(data !== null){
 
-            response.send(data);
+                delete data.password;
+
+                if(data.idTouites !== undefined)
+                    data.idTouites = JSON.parse(data.idTouites);
+
+                if(data.idStalkers !== undefined)
+                    data.idStalkers = JSON.parse(data.idStalkers);
+
+                if(data.idStalking !== undefined)
+                    data.idStalking = JSON.parse(data.idStalking);
+
+                response.send(data);
+            }else{
+                response.statusCode = 404;
+                response.end();
+            }
 
         });
 
@@ -37,8 +52,12 @@ router.get('/touites/:idUser', function(request, response){
 
         userService.getTouites(idUser, function(touitesId){
 
-            response.send(touitesId);
-
+            if(touitesId !== null){
+                response.send(touitesId);
+            }else{
+                response.statusCode = 404;
+                response.end();
+            }
         });
 
     }else{
@@ -47,7 +66,6 @@ router.get('/touites/:idUser', function(request, response){
     }
 
 });
-
 
 router.post('/', function(request, response){
 

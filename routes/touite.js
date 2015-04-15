@@ -81,9 +81,10 @@ router.get('/:idTouite', function(request, response) {
     if(token !== undefined && authService.isConnectedUser(token)) {
         touiteService.getOne(request.params.idTouite, function(err, data){
 
-            if(data != undefined)
+            if(data != undefined) {
+                delete data.motsdiese;
                 response.send(data);
-            else {
+            }else {
                 response.statusCode = 404;
                 response.end();
             }
