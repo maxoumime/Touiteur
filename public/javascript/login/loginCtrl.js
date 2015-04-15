@@ -17,6 +17,7 @@ loginModule.controller('LoginCtrl', ['$scope', '$rootScope', '$location', '$rout
         loginService.login($scope.formLoginData).success(function (data) {
             toastr.success("Connexion Réussie !");
             $rootScope.token = data;
+            $rootScope.username = $scope.formLoginData.username;
             $location.path('/');
         });
     };

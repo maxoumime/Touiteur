@@ -142,7 +142,7 @@ router.post('/', function(request, response){
 
 router.delete('/:idTouite', function(request, response){
 
-    var token = request.body.token;
+    var token = request.query.token;
 
     if(token !== undefined && authService.isConnectedUser(token)) {
 
@@ -161,7 +161,7 @@ router.delete('/:idTouite', function(request, response){
                     response.end();
                 });
             }else{
-                response.statusCode = 403;
+                response.statusCode = 401;
                 response.end();
             }
 

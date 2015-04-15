@@ -37,6 +37,15 @@ accueilModule.controller('AccueilCtrl', ['$scope', '$rootScope', '$location', '$
         });
     };
 
+    $scope.deleteTouite = function(id){
+
+        accueilService.deleteTouite(id).success(function(data, status){
+
+            toastr.success("Touite supprimé !");
+            $scope.getTouites();
+        });
+    };
+
     // LETS GO
 
     $scope.touites = [];

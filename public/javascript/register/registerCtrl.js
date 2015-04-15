@@ -11,6 +11,30 @@ registerModule.controller('RegisterCtrl', ['$scope', '$rootScope', '$location', 
 
     $scope.hover = false;
 
+    $scope.$watch('formRegisterData.id', function(newValue, oldValue) {
+
+        //delete $scope.formRegistration.username.$valid.unique;
+
+        if(newValue !== undefined && newValue.length > 0){
+
+            $scope.formRegistration.username.loading = true;
+
+            registerService.isUsernameAvailable(newValue).success(function(){
+
+                $scope.formRegistration.username.$setValidity('unique', true);
+
+                delete $scope.formRegistration.username.loading;
+
+            }).error(function(data, status){
+
+                if(status === 403)
+                    $scope.formRegistration.username.$setValidity('unique', false);
+
+                delete $scope.formRegistration.username.loading;
+            });
+        }
+    });
+
     $scope.register = function(){
 
         registerService.register($scope.formRegisterData).success(function(data){

@@ -1,7 +1,9 @@
 app.directive('touite', function () {
     return {
         scope: {
-            content: '=content'
+            content: '=',
+            username: '=',
+            deleteTouite: '&'
         },
         templateUrl: 'javascript/directives/touite/templates/touite.html'
     };

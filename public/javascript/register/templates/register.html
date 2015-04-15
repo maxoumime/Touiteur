@@ -21,10 +21,15 @@
         <div class="row">
             <div class="col-lg-offset-3 col-lg-6">
                 <div class="form-group" ng-class="getFieldValidClasses(formRegistration.username)">
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Nom d'utilisateur" ng-model="formRegisterData.id" required>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Nom d'utilisateur" ng-model="formRegisterData.id" ng-model-options="{ debounce: {'default': 500, 'blur': 0} }" required>
                     <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="isFieldValid(formRegistration.username)"></span>
                     <span class="glyphicon glyphicon-warning-sign form-control-feedback" ng-show="isFieldUnvalid(formRegistration.username)"></span>
                 </div>
+            </div>
+            <div class="col-lg-3">
+                <span class="glyphicon glyphicon-refresh glyphicon-refresh-animate" ng-show="formRegistration.username.loading"></span>
+                <span class="vert" ng-show="formRegistration.username.$valid && formRegistration.username.$dirty">Ce nom d'utilisateur est disponible !</span>
+                <span class="rouge" ng-show="formRegistration.username.$error.unique && formRegistration.username.$dirty">Ce nom d'utilisateur est déjà choisi !</span>
             </div>
         </div>
         <div class="row">
@@ -51,7 +56,8 @@
             <div class="col-lg-offset-6 col-lg-3 text-right">
                 <button type="submit" class="btn btn-default"
                         ng-class="{'btn-danger': hover}"
-                        ng-mouseover="hover = true" ng-mouseleave="hover = false">{{ hover ? "Vendre votre âme" : "S'inscrire" }}</button>
+                        ng-mouseover="hover = true" ng-mouseleave="hover = false"
+                        ng-disabled="formRegistration.$invalid">{{ hover ? "Vendre votre âme" : "S'inscrire" }}</button>
             </div>
         </div>
     </form>

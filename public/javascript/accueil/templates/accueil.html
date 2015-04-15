@@ -23,6 +23,6 @@
     </div>
 
     <div class="row" ng-repeat="touite in touites | orderBy:'-time'">
-        <touite content="touite"></touite>
+        <touite content="touite" username="username" delete-touite="deleteTouite"></touite>
     </div>
 </div>

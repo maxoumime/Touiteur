@@ -33,5 +33,25 @@ loginModule.factory('accueilService', ['$http', '$rootScope', '$location', funct
                 else toastr.error("Veuillez réessayer ultérieurement.", "Erreur de connexion");
             });
     };
+
+    factory.deleteTouite = function(idTouite){
+
+
+        return $http.delete(host+'/touite/'+idTouite+"?token=" + $rootScope.token)
+
+            .error(function(data, status){
+
+                if(status === 403) {
+                    toastr.error("Votre connexion a expiré", "Non authorisé");
+                    delete $rootScope.token;
+                    $location.path('/login');
+                }else if(status === 404){
+                    toastr.error("Ce Touite est introuvable", "Introuvable");
+                }else if(status === 401){
+                    toastr.error("Vous n'êtes pas propriétaire de ce Touite", "Refusé");
+                }
+            });
+    };
+
     return factory;
 }]);

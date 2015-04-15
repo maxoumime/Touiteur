@@ -16,5 +16,10 @@ registerModule.factory('registerService', ['$http', '$rootScope', function ($htt
             });
     };
 
+    factory.isUsernameAvailable = function(username){
+
+        return $http.get(host + '/user/available/'+username);
+    };
+
     return factory;
 }]);
