@@ -19,7 +19,7 @@ accueilModule.controller('AccueilCtrl', ['$scope', '$rootScope', '$location', '$
 
         accueilService.postTouite($scope.touitePost).success(function(){
 
-            toastr.success("Félicitations ! Ce Touite sera d'une grande aide !" ,"Touite envoyé !");
+            toastr.success("Ce Touite sera d'une grande aide !" ,"Touite envoyé !");
 
             if(touiteInstantT === $scope.touitePost)
                 delete $scope.touitePost;
