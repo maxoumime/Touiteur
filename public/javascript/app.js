@@ -25,7 +25,7 @@ app.controller('NavbarCtrl', ['$scope', '$rootScope', '$location', '$routeParams
     $scope.logout = function(){
 
         delete $rootScope.token;
-        delete $rootScope.username;
+        delete $rootScope.usernameConnected;
 
         $location.path('/login');
     };

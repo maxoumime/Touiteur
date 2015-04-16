@@ -13,8 +13,6 @@ registerModule.controller('RegisterCtrl', ['$scope', '$rootScope', '$location', 
 
     $scope.$watch('formRegisterData.id', function(newValue, oldValue) {
 
-        //delete $scope.formRegistration.username.$valid.unique;
-
         if(newValue !== undefined && newValue.length > 0){
 
             $scope.formRegistration.username.loading = true;

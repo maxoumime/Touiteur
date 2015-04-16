@@ -4,38 +4,24 @@
 
 userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeParams', 'userService', 'touiteTimelineService', function($scope, $rootScope, $location, $routeParams, userService, touiteTimelineService) {
 
-    //TODO ou param isuser inconnu
     if($rootScope.token === undefined) {
         $location.path('/login');
         return;
     }
 
-    $scope.user = {};
+    if($routeParams.user !== undefined)
+        $scope.usernameRequested = $routeParams.user;
+    else $scope.usernameRequested = $rootScope.usernameConnected;
+
+    $scope.userRequested = {};
 
     function getUser(username){
 
         userService.getUser(username).success(function(data, status){
 
-            $scope.user = data;
+            $scope.userRequested = data;
         });
     }
-
-    $scope.deleteTouite = function(id){
-
-        touiteTimelineService.deleteTouite(id).success(function(data, status){
-
-            toastr.success("Touite supprimé !");
-            $scope.getTouites();
-        });
-    };
-
-    $scope.isStalking = function(){
-
-        if($scope.user.idStalking === undefined)
-            return false;
-
-        return $scope.user.idStalking.indexOf($rootScope.username) === -1;
-    };
 
     function getTouites(user){
 
@@ -53,7 +39,52 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
         });
     }
 
-    getUser("maxoumime2");
-    getTouites("maxoumime2");
+    $scope.deleteTouite = function(id){
+
+        touiteTimelineService.deleteTouite(id).success(function(data, status){
+
+            toastr.success("Touite supprimé !");
+            getTouites();
+        });
+    };
+
+    $scope.isStalking = function(){
+
+        if($rootScope.userConnected.idStalking === undefined)
+            return false;
+
+
+        return $rootScope.userConnected.idStalking.indexOf($scope.usernameRequested) !== -1;
+    };
+
+    $scope.stalk = function(){
+
+        userService.stalk($scope.usernameRequested).success(function(data, status){
+
+            getUser($scope.usernameRequested);
+
+            userService.getUser($rootScope.usernameConnected).success(function(data, status){
+
+                $rootScope.userConnected = data;
+            });
+        });
+    };
+
+    $scope.unstalk = function(){
+
+        userService.unstalk($scope.usernameRequested).success(function(data, status){
+
+            getUser($scope.usernameRequested);
+
+            userService.getUser($rootScope.usernameConnected).success(function(data, status){
+
+                $rootScope.userConnected = data;
+            });
+        });
+
+    };
+
+    getUser($scope.usernameRequested);
+    getTouites($scope.usernameRequested);
 
 }]);

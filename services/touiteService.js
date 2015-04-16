@@ -61,7 +61,7 @@ var touiteService = {
 
             if(touite !== undefined && touite !== null){
 
-                var idAuthor = touite.idAuthor;
+                var idAuthor = touite.authorId;
 
                 hashdb.delete(db.TOUITE, key, function(result){
                     if(result){

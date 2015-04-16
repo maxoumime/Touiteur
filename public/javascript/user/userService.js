@@ -34,5 +34,45 @@ userModule.factory('userService', ['$http', '$location', '$rootScope', function 
             });
     };
 
+    factory.stalk = function(username){
+
+        return $http.post(host + '/stalk/'+username, {token: $rootScope.token})
+
+            .error(function(data, status){
+                if(status === 403){
+                    toastr.error("Votre connexion a expiré", "Non authorisé");
+                    delete $rootScope.token;
+                    $location.path('/login');
+                }else if(status === 404){
+                    toastr.error("Utilisateur introuvable");
+                    $location.path('/');
+                }
+                else if(status === 406){
+                    toastr.error("Vous stalkez déjà cet utilisateur")
+                }
+                else toastr.error("Veuillez réessayer ultérieurement.", "Erreur de connexion");
+            });
+    };
+
+    factory.unstalk = function(username){
+
+        return $http.delete(host+'/stalk/'+username+'?token='+$rootScope.token)
+
+            .error(function(data, status){
+                if(status === 403){
+                    toastr.error("Votre connexion a expiré", "Non authorisé");
+                    delete $rootScope.token;
+                    $location.path('/login');
+                }else if(status === 404){
+                    toastr.error("Utilisateur introuvable");
+                    $location.path('/');
+                }
+                else if(status === 406){
+                    toastr.error("Vous ne stalkez pas cet utilisateur")
+                }
+                else toastr.error("Veuillez réessayer ultérieurement.", "Erreur de connexion");
+            });
+    };
+
     return factory;
 }]);

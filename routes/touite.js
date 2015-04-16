@@ -51,12 +51,14 @@ router.get('/', function(request, response) {
 
                         var pagination = request.query.pagination;
 
+                        var resultNbr = 10;
+
                         if(pagination === undefined || isNaN(pagination))
-                            pagination = 10;
+                            pagination = 0;
 
                         var touitesRetour = touites;
                         if(touites.length > pagination)
-                            touitesRetour = touites.slice(Math.max(touites.length - pagination, 1));
+                            touitesRetour = touites.slice(pagination * resultNbr, resultNbr);
 
                         response.send(touitesRetour);
                     });

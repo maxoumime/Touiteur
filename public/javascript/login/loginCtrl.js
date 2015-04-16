@@ -17,11 +17,11 @@ loginModule.controller('LoginCtrl', ['$scope', '$rootScope', '$location', '$rout
         loginService.login($scope.formLoginData).success(function(data) {
             toastr.success("Connexion Réussie !");
             $rootScope.token = data;
-            $rootScope.username = $scope.formLoginData.username;
+            $rootScope.usernameConnected = $scope.formLoginData.username;
 
-            userService.getUser($rootScope.username).success(function(data, status){
+            userService.getUser($rootScope.usernameConnected).success(function(data, status){
 
-                $rootScope.user = data;
+                $rootScope.userConnected = data;
             });
 
             $location.path('/');

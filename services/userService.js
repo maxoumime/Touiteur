@@ -68,7 +68,7 @@ var userService = {
                 }else stalking = JSON.parse(me.idStalking);
 
                 if(stalking.indexOf(target.id) != -1) {
-                    callback(undefined);
+                    callback("ALREADY");
                 }else{
                     stalking.push(target.id);
 
@@ -117,7 +117,7 @@ var userService = {
                 }else stalking = JSON.parse(me.idStalking);
 
                 if(stalking.indexOf(target.id) == -1){
-                    callback(undefined);
+                    callback("NOT");
                 }else{
                     stalking.splice(stalking.indexOf(target.id), 1);
 

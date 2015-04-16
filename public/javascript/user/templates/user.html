@@ -2,17 +2,17 @@
 
     <div class="col-lg-3">
         <div class="row">
-            <user-resume user="user"></user-resume>
+            <user-resume user="userRequested"></user-resume>
         </div>
-        <div class="row" ng-hide="username === user.id">
-            <button class="btn btn-success" ng-show="!isStalking()">Stalk</button>
-            <button class="btn btn-danget" ng-show="isStalking()">Unstalk</button>
+        <div class="row text-center" ng-hide="usernameConnected === userRequested.id || userRequested === undefined">
+            <button class="btn btn-success" ng-disabled="isStalking()" ng-click="stalk()">Stalk</button>
+            <button class="btn btn-danget" ng-disabled="!isStalking()" ng-click="unstalk()">Unstalk</button>
         </div>
     </div>
 
-    <div class="col-lg-9">
+    <div class="col-lg-offset-1 col-lg-8">
         <div class="row" ng-repeat="touite in touites | orderBy:'-time'">
-            <touite content="touite" username="touite.authorId" delete-touite="deleteTouite(touite.id)"></touite>
+            <touite content="touite" username="usernameConnected" delete-touite="deleteTouite(touite.id)"></touite>
         </div>
 
     </div>

@@ -16,7 +16,9 @@ router.post('/:idUser', function(request, response) {
 
         var idUser = request.params.idUser;
         userService.stalk(user, idUser, function (err, result) {
-            if (result !== "OK") {
+            if (result === "ALREADY") {
+                response.statusCode = 406;
+            }else if(result !== "OK"){
                 response.statusCode = 404;
             }
             response.end();
@@ -30,7 +32,7 @@ router.post('/:idUser', function(request, response) {
 /* Un-stalk someone */
 router.delete('/:idUser', function(request, response) {
 
-    var token = request.body.token;
+    var token = request.query.token;
 
     if(token !== undefined && authService.isConnectedUser(token)) {
 
@@ -38,7 +40,11 @@ router.delete('/:idUser', function(request, response) {
 
         var idUser = request.params.idUser;
         userService.unstalk(user, idUser, function(err, result){
-            if(result !== "OK"){
+
+            if(result === "NOT"){
+                response.statusCode = 406;
+            }
+            else if(result !== "OK"){
                 response.statusCode = 404;
             }
             response.end();

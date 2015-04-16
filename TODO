@@ -1,8 +1,10 @@
 CODES HTTP EN CONSTANTES
 
-Navbar controller: http://stackoverflow.com/questions/16199418/how-do-i-implement-the-bootstrap-navbar-active-class-with-angular-js
+Delete User
+Update User
 
-Recherche
-User
-Follow
-Unfollow
+/!\ Principal
+Lister following
+Lister followers
+Recherche hashtag
+Pagination
