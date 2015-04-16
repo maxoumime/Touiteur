@@ -6,7 +6,22 @@
         </div>
         <div class="row text-center" ng-hide="usernameConnected === userRequested.id || userRequested === undefined">
             <button class="btn btn-success" ng-disabled="isStalking()" ng-click="stalk()">Stalk</button>
-            <button class="btn btn-danget" ng-disabled="!isStalking()" ng-click="unstalk()">Unstalk</button>
+            <button class="btn btn-danger" ng-disabled="!isStalking()" ng-click="unstalk()">Unstalk</button>
+
+            <div class="row" ng-show="!isStalking()">
+                <blockquote>
+                    <p>Allez, tu peux bien le stalker ?</p>
+                    <footer>Le gouvernement le fait bien lui...</footer>
+                </blockquote>
+            </div>
+
+            <div class="row" ng-show="isStalking()">
+                <blockquote>
+                    <p>Alors comme ça on ne veut plus le stalker ?</p>
+                    <footer>En effet il a pas l'air intéressant...</footer>
+                </blockquote>
+            </div>
+
         </div>
     </div>
 
@@ -14,7 +29,6 @@
         <div class="row" ng-repeat="touite in touites | orderBy:'-time'">
             <touite content="touite" username="usernameConnected" delete-touite="deleteTouite(touite.id)"></touite>
         </div>
-
     </div>
 
 </div>

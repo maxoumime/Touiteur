@@ -24,6 +24,10 @@ img.avatar{
   display: inline;
 }
 
+div.topSpace{
+  margin-top: 10px;
+}
+
 .rouge{
 
     color: red;
@@ -51,4 +55,13 @@ img.avatar{
 @keyframes spin {
   from { transform: scale(1) rotate(0deg);}
   to { transform: scale(1) rotate(360deg);}
+}
+
+a[ng-click]{
+  cursor: pointer;
+}
+
+.modal-backdrop{
+
+  opacity: 0.3;
 }

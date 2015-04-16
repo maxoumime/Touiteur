@@ -1,0 +1,31 @@
+<div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="$hide()">&times;</button>
+                <h4 class="modal-title">
+                    <div ng-if="type === 'stalking'">
+                        Liste des personnes stalkées
+                    </div>
+                    <div ng-if="type === 'stalkers'">
+                        Liste des stalkers
+                    </div>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div ng-init="people = (type === 'stalking' ? user.idStalking : user.idStalkers)"></div>
+                <div ng-repeat="user in people">
+                    <user-information username="user" modal="modal"></user-information>
+                </div>
+                <div ng-show="people === undefined || people.empty()">
+                    <div ng-if="type === 'stalking'">
+                        La liste des personnes stalkées est vide
+                    </div>
+                    <div ng-if="type === 'stalkers'">
+                        La liste des stalkers est vide
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

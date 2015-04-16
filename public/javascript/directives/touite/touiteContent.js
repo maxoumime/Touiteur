@@ -25,7 +25,7 @@ app.directive('touiteContent', function () {
                         var hashtag = hashtags[j];
 
                         if(hashtag.length > 0)
-                            htmlText += '<a href="#/hashtag/'+ hashtag + '">#' + hashtag + "</a>";
+                            htmlText += '<a href="#/motdiese/'+ hashtag + '">#' + hashtag + "</a>";
                     }
                 }else{
 

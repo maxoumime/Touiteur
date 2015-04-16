@@ -3,10 +3,12 @@ var host = "http://localhost:8080";
 // Declare app level module which depends on filters, and services
 var app = angular.module('TouiteurApp', [
     'ngRoute',
+    'mgcrea.ngStrap',
     'user.module',
     'touitetimeline.module',
     'login.module',
-    'register.module'
+    'register.module',
+    'motdiese.module'
 ]);
 
 toastr.options = {
@@ -20,7 +22,7 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.otherwise({redirectTo: '/'});
 }]);
 
-app.controller('NavbarCtrl', ['$scope', '$rootScope', '$location', '$routeParams', function($scope, $rootScope, $location, $routeParams) {
+app.controller('NavbarCtrl', ['$scope', '$rootScope', '$location', '$route', function($scope, $rootScope, $location, $route) {
 
     $scope.logout = function(){
 
@@ -33,6 +35,35 @@ app.controller('NavbarCtrl', ['$scope', '$rootScope', '$location', '$routeParams
     $scope.isConnected = function(){
 
         return $rootScope.token !== undefined;
+    };
+
+    $scope.toTimeline = function(){
+
+        if($location.path() === '/')
+            $route.reload();
+
+        else $location.path('/');
+    };
+
+    $scope.rechercherMotdiese = function(){
+
+        if($scope.formRechercheMotdiese.$valid){
+
+                $location.path("/motdiese/"+$scope.motdieseRecherche);
+                delete $scope.motdieseRecherche;
+        }
+
+    };
+
+    $scope.focused = false;
+    $scope.getRechercheMotdieseClass = function() {
+
+        if($scope.formRechercheMotdiese.$pristine || !$scope.focused)
+            return [];
+
+        else if(!$scope.formRechercheMotdiese.$valid && $scope.focused)
+            return ['has-error'];
+
     }
 
 }]);

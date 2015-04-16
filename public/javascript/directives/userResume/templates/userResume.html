@@ -4,18 +4,30 @@
             <img class="img-thumbnail avatar" src="images/avatar.png"/>
         </div>
         <div class="col-lg-3">
-            <h3 class="inline">{{user.id}}</h3>
+            <h3 class="inline">
+                <a class="classy" ng-href="#/user/{{user.id}}">{{user.name}}</a>
+            </h3>
+            <a class="classy" ng-href="#/user/{{user.id}}">
+                <small>@{{user.id}}</small>
+            </a>
         </div>
     </div>
-    <div class="row">
+
+    <div class="row topSpace">
         <div class="col-lg-4">
-            Touites <p class="text-center">{{user.idTouites.length || 0}}</p>
+            <a class="classy" ng-href="#/user/{{user.id}}">
+                Touites <p class="text-center">{{user.idTouites.length || 0}}</p>
+            </a>
         </div>
         <div class="col-lg-4">
-            Stalking <p class="text-center"> {{user.idStalking.length || 0}} </p>
+            <a class="classy" ng-click="displayModal('stalking')">
+                Stalking <p class="text-center"> {{user.idStalking.length || 0}} </p>
+            </a>
         </div>
         <div class="col-lg-4">
-            Stalkers <p class="text-center"> {{user.idStalkers.length || 0}} </p>
+            <a class="classy" ng-click="displayModal('stalkers')">
+                Stalkers <p class="text-center"> {{user.idStalkers.length || 0}} </p>
+            </a>
         </div>
     </div>
 </div>

@@ -1,0 +1,25 @@
+<div class="row">
+
+    <div class="well well-lg text-center">
+        <h3>Touites correspondant au motdiese
+            <strong>
+                <a ng-href="#/motdiese/{{motdiese}}">#{{motdiese}}</a>
+            </strong>
+        </h3>
+    </div>
+
+    <div class="row">
+
+        <div class="row" ng-repeat="touite in touites">
+            <div class="col-lg-offset-2 col-lg-8">
+                <touite content="touite"></touite>
+            </div>
+        </div>
+
+        <div class="row" ng-show="touites === undefined || touites.empty()">
+            Aucun touite contenant ce motdiese n'a été trouvé
+        </div>
+
+    </div>
+
+</div>

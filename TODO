@@ -2,9 +2,10 @@ CODES HTTP EN CONSTANTES
 
 Delete User
 Update User
+Random User not Stalking
+Random Hashtag
+
+Verifier variables dupliquées avec callbacks enchainés
 
 /!\ Principal
-Lister following
-Lister followers
-Recherche hashtag
 Pagination

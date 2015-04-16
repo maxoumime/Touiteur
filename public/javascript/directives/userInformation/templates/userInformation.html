@@ -1,0 +1,20 @@
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-2">
+                <a class="classy" ng-href="#/user/{{user.id}}" ng-click="hideModal()">
+                    <img class="img-thumbnail avatar" src="images/avatar.png"/>
+                </a>
+            </div>
+            <div class="col-lg-3">
+                <a class="classy" ng-href="#/user/{{user.id}}" ng-click="hideModal()">{{user.name}}</a>
+                <a class="classy" ng-href="#/user/{{user.id}}" ng-click="hideModal()">
+                    <small>@{{user.id}}</small>
+                </a>
+            </div>
+            <div class="col-lg-offset-3 col-lg-4 text-right">
+                Inscrit le {{ user.registrationDate | date: 'dd/MM/yyyy' }}
+            </div>
+        </div>
+    </div>
+</div>
