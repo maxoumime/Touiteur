@@ -74,5 +74,20 @@ userModule.factory('userService', ['$http', '$location', '$rootScope', function 
             });
     };
 
+    factory.getRandom = function(){
+
+        return $http.get(host+'/user/random?token='+$rootScope.token)
+
+            .error(function(data, status){
+
+                if(status === 403){
+                    toastr.error("Votre connexion a expiré", "Non authorisé");
+                    delete $rootScope.token;
+                    $location.path('/login');
+                }
+                else toastr.error("Veuillez réessayer ultérieurement.", "Erreur de connexion");
+            });
+    };
+
     return factory;
 }]);

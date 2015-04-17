@@ -1,5 +1,6 @@
 var userService = require('./userService');
 var crypto = require('crypto');
+var uuid = require('node-uuid');
 
 var tokenUser = {};
 
@@ -19,11 +20,11 @@ var authService = {
             if(data !== null && data !== undefined){
                 if(data.password === authService.encrypt(password)){
 
-                    var encrypted = authService.encrypt(username);
+                    var token = uuid.v4();
 
-                    tokenUser[encrypted] = username;
+                    tokenUser[token] = username;
 
-                    callback(encrypted);
+                    callback(token);
                 }else{
 
                     callback(undefined);

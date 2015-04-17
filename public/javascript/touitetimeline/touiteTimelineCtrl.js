@@ -2,7 +2,7 @@
  * Created by maxoumime on 13/04/2015.
  */
 
-touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '$location', '$routeParams', 'touiteTimelineService', 'userService', function($scope, $rootScope, $location, $routeParams, touiteTimelineService, userService) {
+touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '$location', '$routeParams', 'touiteTimelineService', 'userService', 'motdieseService', function($scope, $rootScope, $location, $routeParams, touiteTimelineService, userService, motdieseService) {
 
     if($rootScope.token === undefined) {
         $location.path('/login');
@@ -60,6 +60,7 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
 
             toastr.success("Touite supprimé !");
             $scope.getTouites();
+            $scope.getUser();
         });
     };
 
@@ -89,11 +90,33 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
         return modulo - 1;
     };
 
+    $scope.getRandomMotdiese = function(){
+
+        motdieseService.getRandom().success(function(data, status){
+
+            if(status === 204)
+                $scope.randomMotdiese = undefined;
+            else $scope.randomMotdiese = data;
+        });
+    };
+
+    $scope.getRandomUser = function(){
+
+        userService.getRandom().success(function(data, status){
+
+            if(status === 204)
+                $scope.randomUser = undefined;
+            else $scope.randomUser = data;
+        });
+    }
+
     // LETS GO
 
     $scope.touites = [];
 
     $scope.getTouites();
     $scope.getUser();
+    $scope.getRandomMotdiese();
+    $scope.getRandomUser();
 
 }]);

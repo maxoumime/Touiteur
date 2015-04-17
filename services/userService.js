@@ -186,7 +186,46 @@ var userService = {
         userService.getOne(username, function(err, data){
 
             callback( data !== undefined && data !== null );
-        })
+        });
+    },
+
+    getRandom: function(me, callback){
+
+        if(callback === undefined) callback = nocallback;
+
+        userService.getOne(me, function(errMe, dataMe){
+
+            if(dataMe !== null){
+
+                userService.getAll(function(errAll, dataAll){
+
+                    if(dataAll !== null){
+
+                        var stalking;
+                        if(dataMe.idStalking === undefined){
+                            stalking = [];
+                        }else stalking = JSON.parse(dataMe.idStalking);
+
+                        // +1 car on ne veut pas se trouver dans les random
+                        stalking.push(me);
+
+                        if(dataAll.length > stalking.length){
+
+                            var index;
+                            do{
+                                index = Math.floor((Math.random() * dataAll.length));
+                            }while( stalking.indexOf(dataAll[index]) !== -1 );
+
+                            callback(dataAll[index]);
+
+                        }else callback(null);
+
+                    }else callback(null);
+                });
+
+            }else callback(null);
+
+        });
     }
 };
 

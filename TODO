@@ -2,10 +2,6 @@ CODES HTTP EN CONSTANTES
 
 Delete User
 Update User
-Random User not Stalking
-Random Hashtag
-
-UUID -> token
 
 Avatar
     https://github.com/ninjatronic/angular-base64
@@ -15,5 +11,3 @@ Avatar
 Verifier variables dupliquées avec callbacks enchainés
 
 Stocker token on refresh
-
-Multi envoi (ex: delete touite dans timeline)

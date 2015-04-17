@@ -2,11 +2,15 @@ app.directive('userInformation', ['userService', function (userService) {
     return {
         scope: {
             username: '=',
-            modal: '=?'
+            modal: '=?',
+            light: '=?'
         },
 
-        controller: function ($scope, userService) {
+        controller: function ($rootScope, $scope, userService) {
 
+            if($scope.light === undefined)
+                $scope.light = false;
+            
             userService.getUser($scope.username).success(function(data, status){
 
                 $scope.user = data;

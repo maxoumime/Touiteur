@@ -9,8 +9,18 @@ router.get('/random', function(request, response){
 
     if(authService.isConnectedUser(token))
         motdieseService.getRandom(function(random){
-            response.send(random);
+
+            if(random !== null)
+                response.send(random);
+            else{
+                response.statusCode = 204;
+                response.end();
+            }
         });
+    else{
+        response.statusCode = 403;
+        response.end();
+    }
 });
 
 router.get('/:motdiese', function(request, response) {

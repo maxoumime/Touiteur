@@ -6,13 +6,18 @@
                     <img class="img-thumbnail avatar" src="images/avatar.png"/>
                 </a>
             </div>
-            <div class="col-lg-3">
-                <a class="classy" ng-href="#/user/{{user.id}}" ng-click="hideModal()">{{user.name}}</a>
-                <a class="classy" ng-href="#/user/{{user.id}}" ng-click="hideModal()">
-                    <small>@{{user.id}}</small>
-                </a>
+            <div ng-class="{'col-lg-3': !light, 'col-lg-10': light}">
+                <div class="row">
+                    <a class="classy" ng-href="#/user/{{user.id}}" ng-click="hideModal()">{{user.name}}</a>
+                </div>
+                <div class="row">
+                    <a class="classy" ng-href="#/user/{{user.id}}" ng-click="hideModal()">
+                        <small>@{{user.id}}</small>
+                    </a>
+                </div>
+
             </div>
-            <div class="col-lg-offset-3 col-lg-4 text-right">
+            <div ng-if="!light" class="col-lg-offset-3 col-lg-4 text-right">
                 Inscrit le {{ user.registrationDate | date: 'dd/MM/yyyy' }}
             </div>
         </div>

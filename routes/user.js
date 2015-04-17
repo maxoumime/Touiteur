@@ -4,6 +4,27 @@ var touiteService = require('../services/touiteService');
 var authService = require('../services/authService');
 var router = express.Router();
 
+
+router.get('/random', function(request, response){
+
+    var token = request.query.token;
+
+    if(authService.isConnectedUser(token))
+        userService.getRandom(authService.getUser(token), function(random){
+
+            if(random !== null)
+                response.send(random);
+            else{
+                response.statusCode = 204;
+                response.end();
+            }
+        });
+    else{
+        response.statusCode = 403;
+        response.end();
+    }
+});
+
 router.get('/:id', function(request, response){
 
     var token = request.query.token;

@@ -16,7 +16,7 @@ var motdieseService = {
 
         motdieseService.getAll(function(err, motsdiese){
 
-            if(motsdiese !== null) {
+            if(motsdiese !== null && motsdiese.length > 0) {
 
                 var index = Math.floor((Math.random() * motsdiese.length));
                 callback(motsdiese[index]);

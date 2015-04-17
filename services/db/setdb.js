@@ -44,7 +44,11 @@ var setDb = {
 
         db.generateKey(type, key, function(generatedKey){
 
-            db.clientSetter.hset(generatedKey, data, callback);
+            if(data.length > 0){
+                db.clientSetter.del(generatedKey, callback);
+                db.clientSetter.sadd(generatedKey, data, callback);
+            }
+            else setDb.delete(type, key, callback);
         });
     },
 

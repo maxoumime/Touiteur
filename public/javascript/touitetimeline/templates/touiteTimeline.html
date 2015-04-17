@@ -25,10 +25,27 @@
         </div>
 
         <div class="col-lg-3">
-            <div class="well well-lg">
+            <div class="well well-lg text-center">
 
-                <h4>ICI SE TROUVERA UN USER ALEATOIRE</h4>
-                <h4>ICI SE TROUVERA UN MOT DIESE ALEATOIRE</h4>
+                <div class=" text-center">
+                    <h4>Informations aléatoires</h4>
+                </div>
+
+
+                <div class="row" ng-if="randomUser !== undefined">
+                    <user-information username="randomUser" light="true"></user-information>
+                </div>
+                <h4 class="row" ng-if="randomUser === undefined">
+                    <i>Aucun autre utilisateur</i>
+                </h4>
+
+
+                <h4 ng-if="randomMotdiese !== undefined">
+                    <a ng-href="#/motdiese/{{randomMotdiese}}">#{{randomMotdiese}}</a>
+                </h4>
+                <h4 ng-if="randomMotdiese === undefined">
+                    <i>Aucun motdiese</i>
+                </h4>
 
             </div>
         </div>
