@@ -15,6 +15,3 @@ Verifier variables dupliquées avec callbacks enchainés
 Stocker token on refresh
 
 Multi envoi (ex: delete touite dans timeline)
-
-/!\ Principal
-Pagination
