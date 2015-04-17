@@ -24,6 +24,8 @@ app.config(['$routeProvider', function($routeProvider) {
 
 app.controller('NavbarCtrl', ['$scope', '$rootScope', '$location', '$route', function($scope, $rootScope, $location, $route) {
 
+    $rootScope.pagination = 10;
+
     $scope.logout = function(){
 
         delete $rootScope.token;

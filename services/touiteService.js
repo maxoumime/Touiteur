@@ -38,7 +38,7 @@ var touiteService = {
                             touites = [];
                         }else touites = JSON.parse(me.idTouites);
 
-                        touites.push(touiteData.id);
+                        touites.unshift(touiteData.id);
 
                         me.idTouites = JSON.stringify(touites);
 

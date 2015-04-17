@@ -16,8 +16,8 @@
                     </div>
                     <div class="row">
                         <div class="col-lg-12 text-right">
-                            <span ng-class="{'rouge': touitePost.content.length > 40}">{{touitePost.content.length || 0}}</span>
-                            <button type="submit" class="btn btn-default" ng-click="postTouite()" ng-disabled="touitePost.content === undefined || touitePost.content.length > 40 || touitePost.content.length == 0 ">Envoyer !</button>
+                            <span ng-class="{'rouge': touitePost.content.length > 140}">{{touitePost.content.length || 0}}</span>
+                            <button type="submit" class="btn btn-default" ng-click="postTouite()" ng-disabled="touitePost.content === undefined || touitePost.content.length > 140 || touitePost.content.length == 0 ">Envoyer !</button>
                         </div>
                     </div>
                 </form>
@@ -40,4 +40,28 @@
             <touite content="touite" username="usernameConnected" delete-touite="deleteTouite"></touite>
         </div>
     </div>
+
+    <div class="row" ng-hide="touites === undefined || touites.length === 0">
+        <div class="col-lg-offset-2 col-lg-8 text-center">
+            <nav>
+                <ul class="pagination">
+                    <li>
+                        <a ng-click="toPage(currentPage-1)" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    <li ng-repeat="i in [] | range: getPagesNumber() + 1" ng-class="{'active': i === currentPage}">
+                        <a ng-click="toPage(i)">{{i+1}}</a>
+                    </li>
+                    <li>
+                        <a ng-click="toPage(currentPage+1)" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
 </div>

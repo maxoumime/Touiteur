@@ -11,6 +11,8 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
 
     $scope.touitePost = {};
 
+    $scope.currentPage = 0;
+
     //FONCTIONS
 
     $scope.postTouite = function(){
@@ -30,11 +32,25 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
 
     };
 
-    $scope.getTouites = function(){
+    $scope.getTouites = function(page){
 
-        touiteTimelineService.getTouites().success(function(data){
+        touiteTimelineService.getTouites(page).success(function(data){
 
-            $scope.touites = data;
+            $scope.touites = [];
+
+            $scope.touitesNbr = data.resultNbr;
+
+            if(page !== undefined)
+                $scope.currentPage = page;
+
+            for(var touiteIdIndex in data.touites){
+
+                touiteTimelineService.getTouite(data.touites[touiteIdIndex]).success(function(data, status){
+
+                    $scope.touites.push(data);
+                });
+            }
+
         });
     };
 
@@ -53,6 +69,24 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
 
             $scope.user = data;
         });
+    };
+
+    $scope.toPage = function(page){
+
+        if(page < 0 || page > $scope.getPagesNumber() )
+            return;
+
+        $scope.getTouites(page);
+    };
+
+    $scope.getPagesNumber = function(){
+
+        if($scope.touitesNbr < $rootScope.pagination)
+            return 0;
+
+        var modulo = ($scope.touitesNbr % $rootScope.pagination);
+
+        return modulo - 1;
     };
 
     // LETS GO

@@ -37,8 +37,14 @@ touitetimelineModule.factory('touiteTimelineService', ['$http', '$rootScope', '$
             });
     };
 
-    factory.getTouites = function(){
-        return $http.get(host+'/touite?token='+$rootScope.token)
+    factory.getTouites = function(page){
+
+        var url = host+'/touite?token='+$rootScope.token;
+
+        if(page !== undefined)
+            url += "&pagination=" + page;
+
+        return $http.get(url)
 
             .error(function(data, status){
 

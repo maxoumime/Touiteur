@@ -11,16 +11,22 @@ motdieseModule.controller('MotdieseCtrl', ['$scope', '$rootScope', '$location', 
 
     $scope.motdiese = $routeParams.motdiese;
 
-    $scope.touites = [];
-    motdieseService.getTouites($scope.motdiese).success(function(data, status){
+    $scope.getTouites = function(){
 
-        for(var touiteIdIndex in data){
 
-            touiteTimelineService.getTouite(data[touiteIdIndex]).success(function(dataTouite, statusTouite){
+        motdieseService.getTouites($scope.motdiese).success(function(data, status){
 
-                $scope.touites.push(dataTouite);
-            });
-        }
-    });
+            $scope.touites = [];
+            for(var touiteIdIndex in data){
+
+                touiteTimelineService.getTouite(data[touiteIdIndex]).success(function(dataTouite, statusTouite){
+
+                    $scope.touites.push(dataTouite);
+                });
+            }
+        });
+    };
+
+    $scope.getTouites();
 
 }]);

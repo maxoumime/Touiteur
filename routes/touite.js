@@ -33,34 +33,20 @@ router.get('/', function(request, response) {
                     });
                 }, function(err){
 
-                    var touites = [];
+                    var pagination = request.query.pagination;
 
-                    async.each(touitesId, function(touiteId, callback){
+                    var resultNbr = 10;
 
-                        touiteService.getOne(touiteId, function(err, touite){
+                    if(pagination === undefined || isNaN(pagination))
+                        pagination = 0;
 
-                            if(touite !== undefined && touite !== null){
-                                delete touite.motsdiese;
-                                touites = touites.concat(touite);
-                            }
+                    var touitesRetour = touitesId;
+                    if(touitesId.length > pagination * resultNbr)
+                        touitesRetour = touitesId.slice(pagination * resultNbr, (pagination * resultNbr)+resultNbr);
 
-                            callback();
-                        })
-
-                    }, function(err){
-
-                        var pagination = request.query.pagination;
-
-                        var resultNbr = 10;
-
-                        if(pagination === undefined || isNaN(pagination))
-                            pagination = 0;
-
-                        var touitesRetour = touites;
-                        if(touites.length > pagination)
-                            touitesRetour = touites.slice(pagination * resultNbr, resultNbr);
-
-                        response.send(touitesRetour);
+                    response.send({
+                        touites: touitesRetour,
+                        resultNbr: touitesId.length
                     });
                 });
 
