@@ -6,27 +6,36 @@ var authService = require('../services/authService');
 var HTTP_CONSTANTS = require('./http_constants');
 var router = express.Router();
 
+/* Récupération de tous les touites correspondant à un user en se basant sur les stalking */
 router.get('/', function(request, response) {
 
+    //Récupération du token
     var token = request.query.token;
 
+    //Si l'utilisateur est connecté
     if(token !== undefined && authService.isConnectedUser(token)) {
 
+        //Récupération du user
         var user = authService.getUser(token);
 
+        //Récupération des stalking du user
         userService.getStalking(user, function(data){
 
+            //Si des stalking existent
             if(data !== undefined){
 
-                //On veut aussi avoir ses propres touites
+                //On veut aussi avoir ses propres touites en plus des touites des stalkings
                 data.push(user);
 
                 var touitesId = [];
 
+                //Pour chaque username présent (stalking + user connecté)
                 async.each(data, function(userId, callback){
 
+                    //On récupère leurs touites
                     userService.getTouites(userId, function(touitesIdStalk){
 
+                        //Si l'utilisateur à déjà touité, on ajoute ses touites
                         if(touitesIdStalk !== undefined)
                             touitesId = touitesId.concat(touitesIdStalk);
 
@@ -34,17 +43,26 @@ router.get('/', function(request, response) {
                     });
                 }, function(err){
 
+                    //Une fois fini...
+
+                    //On récupère la page recherchée
                     var pagination = request.query.pagination;
 
+                    //Le nombre de résultats par page
                     var resultNbr = 10;
 
+                    //Si aucune page n'a été indiquée, on se base sur la première page
                     if(pagination === undefined || isNaN(pagination))
                         pagination = 0;
 
+                    //On récupère les touites pour les renvoyer
                     var touitesRetour = touitesId;
+
+                    //Si le nombre de touites excède le nombre de touites recherchés, on ne récupère que ceux qui nous intéressent
                     if(touitesId.length > pagination * resultNbr)
                         touitesRetour = touitesId.slice(pagination * resultNbr, (pagination * resultNbr)+resultNbr);
 
+                    //On renvoie tous les touites, ainsi que le nombre de touites trouvés
                     response.send({
                         touites: touitesRetour,
                         resultNbr: touitesId.length
@@ -63,22 +81,29 @@ router.get('/', function(request, response) {
     }
 });
 
+/* Récupération d'un touite par son ID */
 router.get('/:idTouite', function(request, response) {
 
+    //Récupération du token
     var token = request.query.token;
 
+    //Si l'utilisateur est connecté
     if(token !== undefined && authService.isConnectedUser(token)) {
+
+        //Récupération du touite
         touiteService.getOne(request.params.idTouite, function(err, data){
 
+            //Si le touite est retrouvé
             if(data != undefined) {
+                //On supprime les mots-dièse correspondants au touite, ils ne servent pas au client
                 delete data.motsdiese;
+                //Renvoi du touite
                 response.send(data);
             }else {
                 response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
                 response.end();
             }
         });
-
     }else{
         response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
@@ -130,20 +155,28 @@ router.post('/', function(request, response){
 
 });
 
+/* Suppression du touite */
 router.delete('/:idTouite', function(request, response){
 
+    //Récupération du token
     var token = request.query.token;
 
+    //Si l'utilisateur est connecté
     if(token !== undefined && authService.isConnectedUser(token)) {
 
+        //Récupération du user correspondant au token
         var user = authService.getUser(token);
 
+        //Récupération de l'ID du touite
         var idTouite = request.params.idTouite;
 
+        //Récupération du touite
         touiteService.getOne(idTouite, function(err, data){
 
+            //Si un touite est trouvé, et que l'utilisateur connecté en est bien l'auteur
             if(data !== undefined && data !== null && data.authorId === user) {
 
+                //Suppression du touite
                 touiteService.delete(idTouite, function (result) {
                     if (!result)
                         response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
@@ -154,15 +187,18 @@ router.delete('/:idTouite', function(request, response){
                 response.statusCode = HTTP_CONSTANTS.UNAUTHORISED_ACCESS;
                 response.end();
             }
-
         });
-
     }else{
         response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
     }
 });
 
+/**
+ * Détermine si le touite envoyé est valide
+ * @param touite
+ * @returns {boolean}
+ */
 function isTouiteValid(touite){
 
     var valid = true;

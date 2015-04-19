@@ -1,6 +1,11 @@
 motdieseModule.factory('motdieseService', ['$http', '$rootScope', '$location', function ($http, $rootScope, $location){
     var factory = {};
 
+    /**
+     * Récupères les touites par rapport à un mot-dièse
+     * @param motdiese
+     * @returns {*}
+     */
     factory.getTouites = function(motdiese){
 
         return $http.get(HOST+'/motdiese/'+motdiese+"?token="+$rootScope.token)
@@ -19,6 +24,10 @@ motdieseModule.factory('motdieseService', ['$http', '$rootScope', '$location', f
             });
     };
 
+    /**
+     * Récupère un mot-dièse aléatoire
+     * @returns {*}
+     */
     factory.getRandom = function(){
 
         return $http.get(HOST+'/motdiese/random?token='+$rootScope.token)

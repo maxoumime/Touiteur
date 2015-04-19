@@ -9,6 +9,10 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
         return;
     }
 
+    /**
+     * Récupération de l'utilisateur cible
+     * @param username
+     */
     function getUser(username){
 
         userService.getUser(username).success(function(data, status){
@@ -17,6 +21,10 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
         });
     }
 
+    /**
+     * Récupération des touites d'un utilisateur
+     * @param user
+     */
     function getTouites(user){
 
         userService.getTouites(user).success(function(data, status){
@@ -33,6 +41,10 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
         });
     }
 
+    /**
+     * Suppression des touites d'un utilisateur
+     * @param id
+     */
     $scope.deleteTouite = function(id){
 
         touiteTimelineService.deleteTouite(id).success(function(data, status){
@@ -42,6 +54,10 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
         });
     };
 
+    /**
+     * Détermine si l'utilisateur cible est stalké par l'utilisateur connecté
+     * @returns {boolean}
+     */
     $scope.isStalking = function(){
 
         if($rootScope.userConnected === undefined || $rootScope.userConnected.idStalking === undefined)
@@ -51,6 +67,9 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
         return $rootScope.userConnected.idStalking.indexOf($scope.usernameRequested) !== -1;
     };
 
+    /**
+     * Stalke l'utilisateur cible
+     */
     $scope.stalk = function(){
 
         userService.stalk($scope.usernameRequested).success(function(data, status){
@@ -64,6 +83,9 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
         });
     };
 
+    /**
+     * Unstalk l'utilisateur cible
+     */
     $scope.unstalk = function(){
 
         userService.unstalk($scope.usernameRequested).success(function(data, status){
@@ -78,6 +100,10 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
 
     };
 
+    /**
+     * Détermine la validité du formulaire d'édition
+     * @returns {boolean}
+     */
     function isFormEditionValid(){
 
         for(var formIndex in $scope.formEditionData)
@@ -95,6 +121,9 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
                   ($scope.formEditionData.email !== undefined && $scope.formEditionData.email > 0) );
     }
 
+    /**
+     * Affiche le modal d'édition
+     */
     $scope.editModal = function(){
 
         $scope.opennedModal = $modal(
@@ -107,8 +136,10 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
         );
     };
 
+    /**
+     * Met à jout l'utilisateur
+     */
     $scope.editUser = function(){
-
 
         if(isFormEditionValid()) {
 
@@ -129,6 +160,9 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
         }else toastr.error("Formulaire invalide !");
     };
 
+    /**
+     * Affichage du modal de suppression
+     */
     $scope.deleteModal = function(){
 
         $scope.opennedModal = $modal(
@@ -141,6 +175,9 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
         );
     };
 
+    /**
+     * Suppression de l'utilisateur courant
+     */
     $scope.deleteUser = function(){
 
         $scope.opennedModal.hide();
@@ -156,11 +193,18 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
         });
     };
 
+    //Si un utilisateur est spécifié
     if($routeParams.user !== undefined) {
+
+        //On le récupère
         $scope.usernameRequested = $routeParams.user;
+
+        //On charge les informations de l'utilisateur cible
         getUser($scope.usernameRequested);
         getTouites($scope.usernameRequested);
     }else{
+
+        //Sinon, on charge les données de l'utilisateur courant à son chargement
         $scope.$watch('userConnected', function(newValue, oldValue){
 
             if($rootScope.userConnected !== undefined){
@@ -172,7 +216,6 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
     }
 
     $scope.userRequested = {};
-
     $scope.formEditionData = {};
 
 

@@ -1,3 +1,4 @@
+//Affiche un touite
 app.directive('touite', function () {
     return {
         scope: {

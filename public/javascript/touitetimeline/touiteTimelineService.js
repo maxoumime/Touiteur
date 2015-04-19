@@ -1,6 +1,11 @@
 touitetimelineModule.factory('touiteTimelineService', ['$http', '$rootScope', '$location', function ($http, $rootScope, $location){
     var factory = {};
 
+    /**
+     * Poste un touite
+     * @param touite
+     * @returns {*}
+     */
     factory.postTouite = function(touite){
 
         touite.token = $rootScope.token;
@@ -20,6 +25,11 @@ touitetimelineModule.factory('touiteTimelineService', ['$http', '$rootScope', '$
             });
     };
 
+    /**
+     * Récupère un touite par son ID
+     * @param id
+     * @returns {*}
+     */
     factory.getTouite = function(id){
 
         return $http.get(HOST+'/touite/'+id+"?token="+$rootScope.token)
@@ -37,10 +47,16 @@ touitetimelineModule.factory('touiteTimelineService', ['$http', '$rootScope', '$
             });
     };
 
+    /**
+     * Récupère les touites par rapport à un utilisateur (token) et la pagination
+     * @param page
+     * @returns {*}
+     */
     factory.getTouites = function(page){
 
         var url = HOST+'/touite?token='+$rootScope.token;
 
+        //Si une page est indiquée, on l'ajoute à la requête
         if(page !== undefined)
             url += "&pagination=" + page;
 
@@ -57,6 +73,11 @@ touitetimelineModule.factory('touiteTimelineService', ['$http', '$rootScope', '$
             });
     };
 
+    /**
+     * Suppression d'un touite
+     * @param idTouite
+     * @returns {*}
+     */
     factory.deleteTouite = function(idTouite){
 
 

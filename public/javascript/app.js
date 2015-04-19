@@ -1,4 +1,6 @@
+//URL de base de l'application REST
 var HOST = "http://localhost:8080";
+//Nom de la variable de session
 var SESSION_NAME = "TOUITEUR_TOKEN";
 
 // Declare app level module which depends on filters, and services
@@ -12,6 +14,7 @@ var app = angular.module('TouiteurApp', [
     'motdiese.module'
 ]);
 
+//Options de toastr
 toastr.options = {
     "positionClass": "toast-bottom-right"
 };
@@ -23,12 +26,17 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.otherwise({redirectTo: '/'});
 }]);
 
+/**
+ * Contrôlleur principal
+ */
 app.controller('MainCtrl', ['$scope', '$rootScope', '$location', '$route', 'loginService', 'userService', function($scope, $rootScope, $location, $route, loginService, userService) {
 
     $rootScope.pagination = 10;
 
+    //Si un token est présent dans le navigateur
     if(sessionStorage[SESSION_NAME] !== undefined){
 
+        //On le récupère pour retrouver l'utilisateur connecté
         loginService.isConnected(sessionStorage[SESSION_NAME])
 
             .success(function(data, status){
@@ -48,9 +56,15 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$location', '$route', 'logi
 
 }]);
 
+/**
+ * Contrôlleur de la navbar
+ */
 app.controller('NavbarCtrl', ['$scope', '$rootScope', '$location', '$route', function($scope, $rootScope, $location, $route) {
 
 
+    /**
+     * Déconnexion de l'utilisateur
+     */
     $scope.logout = function(){
 
         delete $rootScope.token;
@@ -61,11 +75,18 @@ app.controller('NavbarCtrl', ['$scope', '$rootScope', '$location', '$route', fun
         $location.path('/login');
     };
 
+    /**
+     * Détermine si l'utilisateur est connecté
+     * @returns {boolean}
+     */
     $scope.isConnected = function(){
 
         return $rootScope.token !== undefined;
     };
 
+    /**
+     * Renvoie vers la timeline
+     */
     $scope.toTimeline = function(){
 
         if($location.path() === '/')
@@ -74,6 +95,9 @@ app.controller('NavbarCtrl', ['$scope', '$rootScope', '$location', '$route', fun
         else $location.path('/');
     };
 
+    /**
+     * Recherche un mot-dièse
+     */
     $scope.rechercherMotdiese = function(){
 
         if($scope.formRechercheMotdiese.$valid){
@@ -84,7 +108,13 @@ app.controller('NavbarCtrl', ['$scope', '$rootScope', '$location', '$route', fun
 
     };
 
+    //Stocke le focus
     $scope.focused = false;
+
+    /**
+     * Renvoie la classe pour le champ de recherche de mot-dièse
+     * @returns {*}
+     */
     $scope.getRechercheMotdieseClass = function() {
 
         if($scope.formRechercheMotdiese.$pristine || !$scope.focused)

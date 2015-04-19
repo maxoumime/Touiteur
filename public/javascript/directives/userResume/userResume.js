@@ -1,3 +1,4 @@
+//Affiche un résumé de l'utilisateur (nombre de touites, nombre de stalkers / stalking)
 app.directive('userResume', ['$modal', function ($modal) {
     return {
         scope: {

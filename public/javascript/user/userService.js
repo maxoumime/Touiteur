@@ -1,12 +1,18 @@
 userModule.factory('userService', ['$http', '$location', '$rootScope', function ($http, $location, $rootScope){
     var factory = {};
 
+    /**
+     * Récupération d'un utilisateur par rapport à son ID (ou non)
+     * @param user
+     */
     factory.getUser = function(user){
 
         var promise;
 
+        //Si l'ID d'un utilisateur est indiqué, alors on cherche cet utilisateur
         if(user !== undefined)
             promise = $http.get(HOST + '/user/'+user+"?token="+$rootScope.token);
+        //Sinon on cherche l'utilisateur courant
         else promise = $http.get(HOST + '/user?token='+$rootScope.token);
 
         return promise
@@ -23,6 +29,11 @@ userModule.factory('userService', ['$http', '$location', '$rootScope', function 
             });
     };
 
+    /**
+     * Récupère les touites d'un utilisateur
+     * @param username
+     * @returns {*}
+     */
     factory.getTouites = function(username){
 
         return $http.get(HOST + '/user/touites/'+username+"?token="+$rootScope.token)
@@ -40,6 +51,11 @@ userModule.factory('userService', ['$http', '$location', '$rootScope', function 
             });
     };
 
+    /**
+     * Met à jour un utilisateur
+     * @param newUser
+     * @returns {*}
+     */
     factory.update = function(newUser){
 
         newUser.token = $rootScope.token;
@@ -60,6 +76,10 @@ userModule.factory('userService', ['$http', '$location', '$rootScope', function 
         });
     };
 
+    /**
+     * Supprime un utilisateur
+     * @returns {*}
+     */
     factory.delete = function(){
 
         return $http.delete(HOST + '/user?token='+$rootScope.token)
@@ -78,6 +98,11 @@ userModule.factory('userService', ['$http', '$location', '$rootScope', function 
             });
     };
 
+    /**
+     * Stalk un utilisateur
+     * @param username
+     * @returns {*}
+     */
     factory.stalk = function(username){
 
         return $http.post(HOST + '/stalk/'+username, {token: $rootScope.token})
@@ -98,6 +123,11 @@ userModule.factory('userService', ['$http', '$location', '$rootScope', function 
             });
     };
 
+    /**
+     * Unstalk un utilisateur
+     * @param username
+     * @returns {*}
+     */
     factory.unstalk = function(username){
 
         return $http.delete(HOST+'/stalk/'+username+'?token='+$rootScope.token)
@@ -118,6 +148,9 @@ userModule.factory('userService', ['$http', '$location', '$rootScope', function 
             });
     };
 
+    /**
+     * Récupère un utilisateur aléatoire
+     */
     factory.getRandom = function(){
 
         return $http.get(HOST+'/user/random?token='+$rootScope.token)

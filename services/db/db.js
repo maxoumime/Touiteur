@@ -17,6 +17,7 @@ clientGetter.on("connect", function(){
     console.log("GETTER CONNECTED");
 });
 
+//"TABLES"
 var TOUITE = "touite";
 var USER = "user";
 var MOTDIESE = "motdiese";
@@ -33,19 +34,34 @@ var db = {
 
     //Fonctions
 
+    /**
+     * Récupère les IDs d'un certain type
+     * @param type
+     * @param callback
+     */
     getAll: function (type, callback) {
 
         return clientGetter.smembers(type, callback);
     },
 
+    /**
+     * Supprime un élément d'un certain type
+     * @param type
+     * @param key
+     * @param callback
+     */
     delete: function (type, key, callback) {
 
+        //Génération de la clef suivant le type et l'id
         db.generateKey(type, key, function(generatedKey){
+            //Traitement parallèle
             async.parallel([
                 function (callback) {
+                    //Suppression de la clef
                     clientSetter.del(generatedKey, callback)
                 },
                 function (callback) {
+                    //Suppression de l'ID sur la "table"
                     clientSetter.srem(type, db.getSuffixKey(generatedKey), callback)
                 }
             ], function (err, results) {
@@ -54,6 +70,12 @@ var db = {
         });
     },
 
+    /**
+     * Génération de la clef suivant le type et la clef
+     * @param type
+     * @param key
+     * @param callback
+     */
     generateKey: function(type, key, callback) {
 
         if (key !== undefined)
@@ -63,6 +85,11 @@ var db = {
         }
     },
 
+    /**
+     * Récupère le suffixe d'une clef générée
+     * @param generatedKey
+     * @returns {*}
+     */
     getSuffixKey: function(generatedKey){
 
         return generatedKey.split(":")[1];

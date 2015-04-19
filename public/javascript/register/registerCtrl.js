@@ -9,22 +9,29 @@ registerModule.controller('RegisterCtrl', ['$scope', '$rootScope', '$location', 
 
     $scope.formRegisterData = {};
 
+    //Détermine le survol de la souris
     $scope.hover = false;
 
+    //Permet de vérifier le changement dans le champ "username"
     $scope.$watch('formRegisterData.id', function(newValue, oldValue) {
 
+        //Si le username existe
         if(newValue !== undefined && newValue.length > 0){
 
+            //Mode de chargement
             $scope.formRegistration.username.loading = true;
 
+            //Appel de service pour vérifier la disponibilité du username
             registerService.isUsernameAvailable(newValue).success(function(){
 
+                //Si oui, on met à jour sa validité
                 $scope.formRegistration.username.$setValidity('unique', true);
 
                 delete $scope.formRegistration.username.loading;
 
             }).error(function(data, status){
 
+                //Sinon, on indique une erreur
                 if(status === 403)
                     $scope.formRegistration.username.$setValidity('unique', false);
 
@@ -33,6 +40,9 @@ registerModule.controller('RegisterCtrl', ['$scope', '$rootScope', '$location', 
         }
     });
 
+    /**
+     * Inscription
+     */
     $scope.register = function(){
 
         registerService.register($scope.formRegisterData).success(function(data){
@@ -44,6 +54,11 @@ registerModule.controller('RegisterCtrl', ['$scope', '$rootScope', '$location', 
 
     };
 
+    /**
+     * Renvoie les classes CSS correspondantes suivant la validité du champ
+     * @param field
+     * @returns {*}
+     */
     $scope.getFieldValidClasses = function(field){
 
         var validClasses = ["has-success", "has-feedback"];
@@ -56,11 +71,21 @@ registerModule.controller('RegisterCtrl', ['$scope', '$rootScope', '$location', 
         else return unvalidClasses;
     };
 
+    /**
+     * Détermine la validité du champ
+     * @param field
+     * @returns {boolean|*}
+     */
     $scope.isFieldValid = function(field){
 
         return ( field.$valid && field.$dirty )
     };
 
+    /**
+     * Détermine la non-validité du champ
+     * @param field
+     * @returns {boolean|*}
+     */
     $scope.isFieldUnvalid = function(field){
 
         return ( Object.keys(field.$error).length != 0 && field.$dirty )

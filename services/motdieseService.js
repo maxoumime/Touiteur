@@ -3,6 +3,11 @@ var setdb = require('./db/setdb');
 
 var motdieseService = {
 
+    /**
+     * Récupère tous les mots-dièse
+     * @param callback
+     * @returns {*}
+     */
     getAll: function(callback){
 
         if(callback === undefined) callback = nocallback;
@@ -10,14 +15,20 @@ var motdieseService = {
         setdb.getAll(db.MOTDIESE, callback);
     },
 
+    /**
+     * Récupère un mot-dièse random
+     */
     getRandom: function(callback){
 
         if(callback === undefined) callback = nocallback;
 
+        //Récupère tous les mots-dièse
         motdieseService.getAll(function(err, motsdiese){
 
+            //S'il y en a
             if(motsdiese !== null && motsdiese.length > 0) {
 
+                //On en récupère un aléatoire, puis on le renvoie
                 var index = Math.floor((Math.random() * motsdiese.length));
                 callback(motsdiese[index]);
             }else callback(null);
@@ -25,6 +36,9 @@ var motdieseService = {
         });
     },
 
+    /**
+     * Récupère les touites par un mot-dièse
+     */
     getTouitesId: function(motDiese, callback){
 
         if(callback === undefined) callback = nocallback;
@@ -32,6 +46,9 @@ var motdieseService = {
         setdb.getOne(db.MOTDIESE, motDiese.toLowerCase(), callback);
     },
 
+    /**
+     * Ajoute un motdièse avec un ID de touite
+     */
     add: function(motDiese, touiteId, callback){
 
         if(callback === undefined) callback = nocallback;
@@ -39,6 +56,9 @@ var motdieseService = {
         setdb.add(db.MOTDIESE, touiteId, callback, motDiese.toLowerCase());
     },
 
+    /**
+     * Ajoute plusieurs ID de touties à un mot-dièse
+     */
     addAll: function(data, touiteId){
 
         var motsdiese;
@@ -51,6 +71,9 @@ var motdieseService = {
             motdieseService.add(motsdiese[motdieseIndex], touiteId);
     },
 
+    /**
+     * Supprime un ID de toutie d'un mot-dièse
+     */
     deleteTouiteFrom: function(idTouite, motdiese, callback){
 
         if(callback === undefined) callback = nocallback;
@@ -67,6 +90,9 @@ var motdieseService = {
         });
     },
 
+    /**
+     * Récupère les mots-dièse d'un touite
+     */
     extractMotsdiese: function(text){
 
         var pattern = /#\w*/g;

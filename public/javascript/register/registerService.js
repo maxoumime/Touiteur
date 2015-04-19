@@ -1,6 +1,11 @@
 registerModule.factory('registerService', ['$http', '$rootScope', function ($http, $rootScope){
     var factory = {};
 
+    /**
+     * Enregistre un utilisateur
+     * @param registrationData
+     * @returns {*}
+     */
     factory.register = function(registrationData){
         return $http.post(HOST+'/user', registrationData)
 
@@ -16,6 +21,11 @@ registerModule.factory('registerService', ['$http', '$rootScope', function ($htt
             });
     };
 
+    /**
+     * Détermine si le nom d'utilisateur est disponible
+     * @param username
+     * @returns {HttpPromise}
+     */
     factory.isUsernameAvailable = function(username){
 
         return $http.get(HOST + '/user/available/'+username);

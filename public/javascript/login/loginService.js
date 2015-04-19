@@ -1,6 +1,11 @@
 loginModule.factory('loginService', ['$http', function ($http){
     var factory = {};
 
+    /**
+     * Authentifie l'utilisateur
+     * @param loginData
+     * @returns {*}
+     */
     factory.login = function(loginData){
         return $http.post(HOST+'/login', loginData)
 
@@ -12,6 +17,11 @@ loginModule.factory('loginService', ['$http', function ($http){
             });
     };
 
+    /**
+     * Détermine la connexion de l'utilisateur
+     * @param token
+     * @returns {HttpPromise}
+     */
     factory.isConnected = function(token){
         return $http.get(HOST+'/login/' + token);
     };

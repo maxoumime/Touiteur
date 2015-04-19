@@ -15,6 +15,9 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
 
     //FONCTIONS
 
+    /**
+     * Ajoute un touite
+     */
     $scope.postTouite = function(){
 
         var touiteInstantT = $scope.touitePost;
@@ -32,6 +35,10 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
 
     };
 
+    /**
+     * Récupération des touites
+     * @param page
+     */
     $scope.getTouites = function(page){
 
         touiteTimelineService.getTouites(page).success(function(data){
@@ -54,6 +61,10 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
         });
     };
 
+    /**
+     * Suppression d'un touite
+     * @param id
+     */
     $scope.deleteTouite = function(id){
 
         touiteTimelineService.deleteTouite(id).success(function(data, status){
@@ -64,6 +75,9 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
         });
     };
 
+    /**
+     * Récupération du user connecté
+     */
     $scope.getUser = function(){
 
         userService.getUser($rootScope.userConnected.id).success(function(data, status){
@@ -72,6 +86,10 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
         });
     };
 
+    /**
+     * Affiche la page de touites n° X
+     * @param page
+     */
     $scope.toPage = function(page){
 
         if(page < 0 || page > $scope.getPagesNumber() )
@@ -80,6 +98,10 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
         $scope.getTouites(page);
     };
 
+    /**
+     * Récupère le nombre de pages
+     * @returns {number}
+     */
     $scope.getPagesNumber = function(){
 
         if($scope.touitesNbr < $rootScope.pagination)
@@ -90,6 +112,9 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
         return modulo - 1;
     };
 
+    /**
+     * Récupération d'un mot-dièse aléatoire
+     */
     $scope.getRandomMotdiese = function(){
 
         motdieseService.getRandom().success(function(data, status){
@@ -100,6 +125,9 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
         });
     };
 
+    /**
+     * Récupération d'un utilisateur aléatoire
+     */
     $scope.getRandomUser = function(){
 
         userService.getRandom().success(function(data, status){
@@ -114,6 +142,7 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
 
     $scope.touites = [];
 
+    //Quand l'utilisateur connecté est récupéré, on charge le contenu
     $scope.$watch('userConnected', function(newValue, oldValue){
 
         if($rootScope.userConnected !== undefined) {

@@ -8,6 +8,8 @@ app.directive('userInformation', ['userService', function (userService) {
 
         controller: function ($rootScope, $scope, userService) {
 
+            //light détermine l'affichage de la date
+
             if($scope.light === undefined)
                 $scope.light = false;
             

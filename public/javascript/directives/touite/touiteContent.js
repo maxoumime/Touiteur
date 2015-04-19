@@ -1,3 +1,4 @@
+//Affiche le contenu d'un touite (avec un lien par mot-dièse)
 app.directive('touiteContent', function () {
     return {
         scope: {
@@ -15,17 +16,16 @@ app.directive('touiteContent', function () {
 
                 var word = touiteContentArray[i];
 
-
                 if(word.match(/^#\w*$/) !== null) {
 
-                    var hashtags = word.split("#");
+                    var motsdiese = word.split("#");
 
-                    for (var j = 0; j < hashtags.length; j++) {
+                    for (var j = 0; j < motsdiese.length; j++) {
 
-                        var hashtag = hashtags[j];
+                        var motdiese = motsdiese[j];
 
-                        if(hashtag.length > 0)
-                            htmlText += '<a href="#/motdiese/'+ hashtag + '">#' + hashtag + " </a>";
+                        if(motdiese.length > 0)
+                            htmlText += '<a href="#/motdiese/'+ motdiese + '">#' + motdiese + " </a>";
                     }
                 }else{
 
