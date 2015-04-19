@@ -2,7 +2,7 @@ loginModule.factory('loginService', ['$http', function ($http){
     var factory = {};
 
     factory.login = function(loginData){
-        return $http.post(host+'/login', loginData)
+        return $http.post(HOST+'/login', loginData)
 
             .error(function(data, status){
 
@@ -11,5 +11,10 @@ loginModule.factory('loginService', ['$http', function ($http){
                 else toastr.error("Veuillez réessayer ultérieurement.", "Erreur de connexion");
             });
     };
+
+    factory.isConnected = function(token){
+        return $http.get(HOST+'/login/' + token);
+    };
+
     return factory;
 }]);

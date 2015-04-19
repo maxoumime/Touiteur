@@ -23,6 +23,16 @@ router.post('/', function(request, response) {
     }
 });
 
+router.get('/:token', function(request, response){
+
+    var token = request.params.token;
+
+    if(authService.getUser(token) === undefined)
+        response.statusCode = 403;
+
+    response.end();
+});
+
 function isFormOK(data){
 
     return ( data.username !== undefined && data.password !== undefined );

@@ -2,7 +2,7 @@ registerModule.factory('registerService', ['$http', '$rootScope', function ($htt
     var factory = {};
 
     factory.register = function(registrationData){
-        return $http.post(host+'/user', registrationData)
+        return $http.post(HOST+'/user', registrationData)
 
             .error(function(data, status){
 
@@ -18,7 +18,7 @@ registerModule.factory('registerService', ['$http', '$rootScope', function ($htt
 
     factory.isUsernameAvailable = function(username){
 
-        return $http.get(host + '/user/available/'+username);
+        return $http.get(HOST + '/user/available/'+username);
     };
 
     return factory;

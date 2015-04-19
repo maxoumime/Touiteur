@@ -66,7 +66,7 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
 
     $scope.getUser = function(){
 
-        userService.getUser($rootScope.usernameConnected).success(function(data, status){
+        userService.getUser($rootScope.userConnected.id).success(function(data, status){
 
             $scope.user = data;
         });
@@ -108,15 +108,21 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
                 $scope.randomUser = undefined;
             else $scope.randomUser = data;
         });
-    }
+    };
 
     // LETS GO
 
     $scope.touites = [];
 
-    $scope.getTouites();
-    $scope.getUser();
-    $scope.getRandomMotdiese();
-    $scope.getRandomUser();
+    $scope.$watch('userConnected', function(newValue, oldValue){
+
+        if($rootScope.userConnected !== undefined) {
+            $scope.getTouites();
+            $scope.getUser();
+            $scope.getRandomMotdiese();
+            $scope.getRandomUser();
+        }
+    });
+
 
 }]);

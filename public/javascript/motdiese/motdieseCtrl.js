@@ -13,7 +13,6 @@ motdieseModule.controller('MotdieseCtrl', ['$scope', '$rootScope', '$location', 
 
     $scope.getTouites = function(){
 
-
         motdieseService.getTouites($scope.motdiese).success(function(data, status){
 
             $scope.touites = [];

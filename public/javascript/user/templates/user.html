@@ -4,7 +4,7 @@
         <div class="row">
             <user-resume user="userRequested"></user-resume>
         </div>
-        <div class="row text-center" ng-hide="usernameConnected === userRequested.id || userRequested === undefined">
+        <div class="row text-center" ng-hide="userConnected.id === userRequested.id || userRequested === undefined">
             <button class="btn btn-success" ng-disabled="isStalking()" ng-click="stalk()">Stalk</button>
             <button class="btn btn-danger" ng-disabled="!isStalking()" ng-click="unstalk()">Unstalk</button>
 
@@ -27,7 +27,7 @@
 
     <div class="col-lg-offset-1 col-lg-8">
         <div class="row" ng-repeat="touite in touites | orderBy:'-time'">
-            <touite content="touite" username="usernameConnected" delete-touite="deleteTouite"></touite>
+            <touite content="touite" username="userConnected.id" delete-touite="deleteTouite"></touite>
         </div>
     </div>
 

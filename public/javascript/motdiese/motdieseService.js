@@ -3,7 +3,7 @@ motdieseModule.factory('motdieseService', ['$http', '$rootScope', '$location', f
 
     factory.getTouites = function(motdiese){
 
-        return $http.get(host+'/motdiese/'+motdiese+"?token="+$rootScope.token)
+        return $http.get(HOST+'/motdiese/'+motdiese+"?token="+$rootScope.token)
 
             .error(function(data, status){
 
@@ -21,7 +21,7 @@ motdieseModule.factory('motdieseService', ['$http', '$rootScope', '$location', f
 
     factory.getRandom = function(){
 
-        return $http.get(host+'/motdiese/random?token='+$rootScope.token)
+        return $http.get(HOST+'/motdiese/random?token='+$rootScope.token)
 
             .error(function(data, status){
 

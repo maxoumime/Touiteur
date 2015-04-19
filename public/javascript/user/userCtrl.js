@@ -9,12 +9,6 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
         return;
     }
 
-    if($routeParams.user !== undefined)
-        $scope.usernameRequested = $routeParams.user;
-    else $scope.usernameRequested = $rootScope.usernameConnected;
-
-    $scope.userRequested = {};
-
     function getUser(username){
 
         userService.getUser(username).success(function(data, status){
@@ -50,7 +44,7 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
 
     $scope.isStalking = function(){
 
-        if($rootScope.userConnected.idStalking === undefined)
+        if($rootScope.userConnected === undefined || $rootScope.userConnected.idStalking === undefined)
             return false;
 
 
@@ -63,7 +57,7 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
 
             getUser($scope.usernameRequested);
 
-            userService.getUser($rootScope.usernameConnected).success(function(data, status){
+            userService.getUser($rootScope.userConnected.id).success(function(data, status){
 
                 $rootScope.userConnected = data;
             });
@@ -76,7 +70,7 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
 
             getUser($scope.usernameRequested);
 
-            userService.getUser($rootScope.usernameConnected).success(function(data, status){
+            userService.getUser($rootScope.userConnected.id).success(function(data, status){
 
                 $rootScope.userConnected = data;
             });
@@ -84,7 +78,24 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
 
     };
 
-    getUser($scope.usernameRequested);
-    getTouites($scope.usernameRequested);
+
+    if($routeParams.user !== undefined) {
+        $scope.usernameRequested = $routeParams.user;
+        getUser($scope.usernameRequested);
+        getTouites($scope.usernameRequested);
+    }else{
+        $scope.$watch('userConnected', function(newValue, oldValue){
+
+            if($rootScope.userConnected !== undefined){
+                $scope.usernameRequested = $rootScope.userConnected.id;
+                getUser($scope.usernameRequested);
+                getTouites($scope.usernameRequested);
+            }
+        });
+    }
+
+    $scope.userRequested = {};
+
+
 
 }]);

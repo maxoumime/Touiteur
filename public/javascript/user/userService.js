@@ -3,7 +3,13 @@ userModule.factory('userService', ['$http', '$location', '$rootScope', function 
 
     factory.getUser = function(user){
 
-        return $http.get(host + '/user/'+user+"?token="+$rootScope.token)
+        var promise;
+
+        if(user !== undefined)
+            promise = $http.get(HOST + '/user/'+user+"?token="+$rootScope.token);
+        else promise = $http.get(HOST + '/user?token='+$rootScope.token);
+
+        return promise
             .error(function(data, status){
                 if(status === 403){
                     toastr.error("Votre connexion a expiré", "Non authorisé");
@@ -19,7 +25,7 @@ userModule.factory('userService', ['$http', '$location', '$rootScope', function 
 
     factory.getTouites = function(username){
 
-        return $http.get(host + '/user/touites/'+username+"?token="+$rootScope.token)
+        return $http.get(HOST + '/user/touites/'+username+"?token="+$rootScope.token)
 
             .error(function(data, status){
                 if(status === 403){
@@ -36,7 +42,7 @@ userModule.factory('userService', ['$http', '$location', '$rootScope', function 
 
     factory.stalk = function(username){
 
-        return $http.post(host + '/stalk/'+username, {token: $rootScope.token})
+        return $http.post(HOST + '/stalk/'+username, {token: $rootScope.token})
 
             .error(function(data, status){
                 if(status === 403){
@@ -56,7 +62,7 @@ userModule.factory('userService', ['$http', '$location', '$rootScope', function 
 
     factory.unstalk = function(username){
 
-        return $http.delete(host+'/stalk/'+username+'?token='+$rootScope.token)
+        return $http.delete(HOST+'/stalk/'+username+'?token='+$rootScope.token)
 
             .error(function(data, status){
                 if(status === 403){
@@ -76,7 +82,7 @@ userModule.factory('userService', ['$http', '$location', '$rootScope', function 
 
     factory.getRandom = function(){
 
-        return $http.get(host+'/user/random?token='+$rootScope.token)
+        return $http.get(HOST+'/user/random?token='+$rootScope.token)
 
             .error(function(data, status){
 

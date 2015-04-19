@@ -5,7 +5,7 @@ touitetimelineModule.factory('touiteTimelineService', ['$http', '$rootScope', '$
 
         touite.token = $rootScope.token;
 
-        return $http.post(host+'/touite', touite)
+        return $http.post(HOST+'/touite', touite)
 
             .error(function(data, status){
 
@@ -22,7 +22,7 @@ touitetimelineModule.factory('touiteTimelineService', ['$http', '$rootScope', '$
 
     factory.getTouite = function(id){
 
-        return $http.get(host+'/touite/'+id+"?token="+$rootScope.token)
+        return $http.get(HOST+'/touite/'+id+"?token="+$rootScope.token)
 
             .error(function(data, status){
                 if(status === 403){
@@ -39,7 +39,7 @@ touitetimelineModule.factory('touiteTimelineService', ['$http', '$rootScope', '$
 
     factory.getTouites = function(page){
 
-        var url = host+'/touite?token='+$rootScope.token;
+        var url = HOST+'/touite?token='+$rootScope.token;
 
         if(page !== undefined)
             url += "&pagination=" + page;
@@ -60,7 +60,7 @@ touitetimelineModule.factory('touiteTimelineService', ['$http', '$rootScope', '$
     factory.deleteTouite = function(idTouite){
 
 
-        return $http.delete(host+'/touite/'+idTouite+"?token=" + $rootScope.token)
+        return $http.delete(HOST+'/touite/'+idTouite+"?token=" + $rootScope.token)
 
             .error(function(data, status){
 

@@ -25,6 +25,44 @@ router.get('/random', function(request, response){
     }
 });
 
+router.get('/', function(request, response){
+
+    var token = request.query.token;
+
+    if(token !== undefined && authService.isConnectedUser(token)){
+
+        var idUser = authService.getUser(token);
+
+        userService.getOne(idUser, function(err, data){
+
+            if(data !== null){
+
+                delete data.password;
+
+                if(data.idTouites !== undefined)
+                    data.idTouites = JSON.parse(data.idTouites);
+
+                if(data.idStalkers !== undefined)
+                    data.idStalkers = JSON.parse(data.idStalkers);
+
+                if(data.idStalking !== undefined)
+                    data.idStalking = JSON.parse(data.idStalking);
+
+                response.send(data);
+            }else{
+                response.statusCode = 404;
+                response.end();
+            }
+
+        });
+
+    }else{
+        response.statusCode = 403;
+        response.end();
+    }
+
+});
+
 router.get('/:id', function(request, response){
 
     var token = request.query.token;
