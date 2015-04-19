@@ -19,7 +19,6 @@ clientGetter.on("connect", function(){
 
 var TOUITE = "touite";
 var USER = "user";
-var NEXT_TOUITE = "next_touite";
 var MOTDIESE = "motdiese";
 
 var db = {

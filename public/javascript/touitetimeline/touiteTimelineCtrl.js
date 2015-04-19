@@ -45,9 +45,9 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
 
             for(var touiteIdIndex in data.touites){
 
-                touiteTimelineService.getTouite(data.touites[touiteIdIndex]).success(function(data, status){
+                touiteTimelineService.getTouite(data.touites[touiteIdIndex]).success(function(dataTouite, status){
 
-                    $scope.touites.push(data);
+                    $scope.touites.push(dataTouite);
                 });
             }
 

@@ -25,9 +25,9 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
 
             for(var idIndex in data){
 
-                touiteTimelineService.getTouite(data[idIndex]).success(function(data, status){
+                touiteTimelineService.getTouite(data[idIndex]).success(function(dataTouite, status){
 
-                    $scope.touites.push(data);
+                    $scope.touites.push(dataTouite);
                 });
             }
         });
@@ -57,9 +57,9 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
 
             getUser($scope.usernameRequested);
 
-            userService.getUser($rootScope.userConnected.id).success(function(data, status){
+            userService.getUser($rootScope.userConnected.id).success(function(dataUser, status){
 
-                $rootScope.userConnected = data;
+                $rootScope.userConnected = dataUser;
             });
         });
     };
@@ -70,17 +70,63 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
 
             getUser($scope.usernameRequested);
 
-            userService.getUser($rootScope.userConnected.id).success(function(data, status){
+            userService.getUser($rootScope.userConnected.id).success(function(dataUser, status){
 
-                $rootScope.userConnected = data;
+                $rootScope.userConnected = dataUser;
             });
         });
 
     };
 
+    function isFormEditionValid(){
+
+        for(var formIndex in $scope.formEditionData)
+            if($scope.formEditionData[formIndex].length === 0)
+                delete $scope.formEditionData[formIndex];
+
+        if($scope.formEditionData === undefined)
+            return false;
+
+        if($scope.formEditionData.oldPassword !== undefined && $scope.formEditionData.oldPassword.length > 0 && $scope.formEditionData.password !== undefined && $scope.formEditionData.password.length > 0)
+            return true;
+
+        return ( ($scope.formEditionData.name !== undefined && $scope.formEditionData.name.length > 0)
+                    ||
+                  ($scope.formEditionData.email !== undefined && $scope.formEditionData.email > 0) );
+    }
+
     $scope.editModal = function(){
 
-        $scope.opennedModal.hide();
+        $scope.opennedModal = $modal(
+            {
+                scope: $scope,
+                template: 'javascript/user/templates/editFormModal.html',
+                html: true,
+                show: true
+            }
+        );
+    };
+
+    $scope.editUser = function(){
+
+
+        if(isFormEditionValid()) {
+
+            userService.update($scope.formEditionData).success(function() {
+
+                toastr.success("Utilisateur modifié !");
+                userService.getUser($rootScope.userConnected.id).success(function(data, status){
+
+                    $scope.opennedModal.hide();
+                    delete $scope.opennedModal;
+
+                    $scope.formEditionData = {};
+                    $rootScope.userConnected = data;
+                    getUser($scope.usernameRequested);
+                });
+
+            });
+        }else toastr.error("Formulaire invalide !");
     };
 
     $scope.deleteModal = function(){
@@ -126,6 +172,8 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
     }
 
     $scope.userRequested = {};
+
+    $scope.formEditionData = {};
 
 
 }]);

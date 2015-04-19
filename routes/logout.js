@@ -1,4 +1,5 @@
 var authService = require('../services/authService');
+var HTTP_CONSTANTS = require('./http_constants');
 var express = require('express');
 var router = express.Router();
 
@@ -9,9 +10,9 @@ router.post('/', function(request, response) {
     if(token !== undefined){
 
         if(!authService.clearToken(token))
-            response.statusCode = 404;
+            response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
 
-    }else response.statusCode = 400;
+    }else response.statusCode = HTTP_CONSTANTS.FORM_INVALID;
 
     response.end();
 

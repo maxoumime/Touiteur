@@ -40,6 +40,26 @@ userModule.factory('userService', ['$http', '$location', '$rootScope', function 
             });
     };
 
+    factory.update = function(newUser){
+
+        newUser.token = $rootScope.token;
+
+        return $http.put(HOST + '/user', newUser).error(function(data, status){
+
+            if(status === 403){
+                toastr.error("Votre connexion a expiré", "Non authorisé");
+                delete $rootScope.token;
+                $location.path('/login');
+            }else if(status === 401){
+                toastr.error("Mot de passe invalide");
+            }else if(status === 404){
+                toastr.error("Utilisateur introuvable");
+                $location.path('/');
+            }
+            else toastr.error("Veuillez réessayer ultérieurement.", "Erreur de connexion");
+        });
+    };
+
     factory.delete = function(){
 
         return $http.delete(HOST + '/user?token='+$rootScope.token)

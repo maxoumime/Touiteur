@@ -1,10 +1,11 @@
 var express = require('express');
 var userService = require('../services/userService');
 var authService = require('../services/authService');
+var HTTP_CONSTANTS = require('./http_constants');
 var router = express.Router();
 
 /* GET stalking listing for an id. */
-router.get('/:idUser', function(request, response, next) {
+router.get('/:idUser', function(request, response) {
 
     var token = request.query.token;
 
@@ -16,14 +17,13 @@ router.get('/:idUser', function(request, response, next) {
             if(result !== undefined)
                 response.send(result);
             else{
-                //TODO TROUVER BON CODE HTTP
-                response.statusCode = 500;
+                response.statusCode = HTTP_CONSTANTS.REDIS_ACCESS_ERROR;
                 response.end();
             }
         });
 
     }else{
-        response.statusCode = 403;
+        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
     }
 });

@@ -1,5 +1,6 @@
 var motdieseService = require('../services/motdieseService');
 var authService = require('../services/authService');
+var HTTP_CONSTANTS = require('./http_constants');
 var express = require('express');
 var router = express.Router();
 
@@ -13,12 +14,12 @@ router.get('/random', function(request, response){
             if(random !== null)
                 response.send(random);
             else{
-                response.statusCode = 204;
+                response.statusCode = HTTP_CONSTANTS.NO_RESULT;
                 response.end();
             }
         });
     else{
-        response.statusCode = 403;
+        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
     }
 });
@@ -36,12 +37,12 @@ router.get('/:motdiese', function(request, response) {
                 response.send(touitesId);
             });
         }else{
-            response.statusCode = 403;
+            response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
             response.end();
         }
 
     }else{
-        response.statusCode = 400;
+        response.statusCode = HTTP_CONSTANTS.FORM_INVALID;
         response.end();
     }
 });

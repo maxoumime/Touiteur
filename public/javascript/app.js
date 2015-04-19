@@ -27,7 +27,6 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$location', '$route', 'logi
 
     $rootScope.pagination = 10;
 
-
     if(sessionStorage[SESSION_NAME] !== undefined){
 
         loginService.isConnected(sessionStorage[SESSION_NAME])

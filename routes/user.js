@@ -2,6 +2,7 @@ var express = require('express');
 var userService = require('../services/userService');
 var touiteService = require('../services/touiteService');
 var authService = require('../services/authService');
+var HTTP_CONSTANTS = require('./http_constants');
 var router = express.Router();
 
 
@@ -15,12 +16,12 @@ router.get('/random', function(request, response){
             if(random !== null)
                 response.send(random);
             else{
-                response.statusCode = 204;
+                response.statusCode = HTTP_CONSTANTS.NO_RESULT;
                 response.end();
             }
         });
     else{
-        response.statusCode = 403;
+        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
     }
 });
@@ -50,14 +51,14 @@ router.get('/', function(request, response){
 
                 response.send(data);
             }else{
-                response.statusCode = 404;
+                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
                 response.end();
             }
 
         });
 
     }else{
-        response.statusCode = 403;
+        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
     }
 
@@ -88,14 +89,14 @@ router.get('/:id', function(request, response){
 
                 response.send(data);
             }else{
-                response.statusCode = 404;
+                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
                 response.end();
             }
 
         });
 
     }else{
-        response.statusCode = 403;
+        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
     }
 
@@ -114,13 +115,13 @@ router.get('/touites/:idUser', function(request, response){
             if(touitesId !== null){
                 response.send(touitesId);
             }else{
-                response.statusCode = 404;
+                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
                 response.end();
             }
         });
 
     }else{
-        response.statusCode = 403;
+        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
     }
 
@@ -144,24 +145,24 @@ router.post('/', function(request, response){
                             delete result.password;
                             response.send(result);
                         } else {
-                            response.statusCode = 500;
+                            response.statusCode = HTTP_CONSTANTS.REDIS_ACCESS_ERROR;
                             response.end();
                         }
                     });
                 } else {
-                    response.statusCode = 403;
+                    response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
                     response.end();
                 }
             });
 
         }else{
-            response.statusCode = 418;
+            response.statusCode = HTTP_CONSTANTS.INVALID_EMAIL;
             response.end();
         }
 
 
     } else {
-        response.statusCode = 400;
+        response.statusCode = HTTP_CONSTANTS.FORM_INVALID;
         response.end();
     }
 
@@ -169,27 +170,40 @@ router.post('/', function(request, response){
 
 router.put('/', function(request, response){
 
-    var token = request.params.token;
+    var token = request.body.token;
 
     if(token !== undefined && authService.isConnectedUser(token)){
 
         var user = authService.getUser(token);
         var newUser = request.body;
 
-        userService.getOne(user, function(userDB){
+        userService.getOne(user, function(err, userDB){
 
             if(userDB !== null){
 
                 var mergedUser = userDB;
 
                 mergedUser.name  = newUser.name !== undefined ?  newUser.name : userDB.name;
-                mergedUser.email = newUser.email !== undefined ? newUser.email : userDB.email;
+
+                if(newUser.email !== undefined)
+                    if(isEmailValid(newUser.email))
+                        mergedUser.email = newUser.email !== undefined ? newUser.email : userDB.email;
+                    else{
+                        response.statusCode = HTTP_CONSTANTS.INVALID_EMAIL;
+                        response.end();
+                        return;
+                    }
 
                 if(newUser.oldPassword !== undefined) {
 
                     var encryptedOldPassword = authService.encrypt(newUser.oldPassword);
                     if( encryptedOldPassword === userDB.password )
-                        mergedUser.password = encryptedOldPassword;
+                        mergedUser.password = authService.encrypt(newUser.password);
+                    else{
+                        response.statusCode = HTTP_CONSTANTS.UNAUTHORISED_ACCESS;
+                        response.end();
+                        return;
+                    }
                 }
 
                 userService.update(user, mergedUser, function(){
@@ -197,12 +211,16 @@ router.put('/', function(request, response){
                     delete mergedUser.password;
                     response.send(mergedUser);
                 });
-            }else response.statusCode = 404;
+
+            }else{
+                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+                response.end();
+            }
         });
 
 
     }else{
-        response.statusCode = 403;
+        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
     }
 });
@@ -237,13 +255,13 @@ router.delete('/', function(request, response){
         userService.delete(user, function(result){
 
             if(!result)
-                response.statusCode = 404;
+                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
 
             response.end();
         });
 
     }else{
-        response.statusCode = 403;
+        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
     }
 });
@@ -254,7 +272,7 @@ router.get('/available/:username', function(request, response){
     userService.doesExist(username, function(does){
 
         if(does)
-            response.statusCode = 403;
+            response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
 
         response.end();
 

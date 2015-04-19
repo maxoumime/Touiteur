@@ -4,42 +4,58 @@
             <div class="modal-header">
                 <button type="button" class="close" ng-click="$hide()">&times;</button>
                 <h4 class="modal-title">
-
+                    Modification de l'utilisateur
                 </h4>
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <form name="formRegistration" ng-submit="register()">
+                    <form name="formEdition">
                         <div class="row">
                             <div class="col-lg-offset-3 col-lg-6">
-                                <div class="form-group" ng-class="getFieldValidClasses(formRegistration.name)">
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="Nom" ng-model="formRegisterData.name" required>
-                                    <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="isFieldValid(formRegistration.name)"></span>
-                                    <span class="glyphicon glyphicon-warning-sign form-control-feedback" ng-show="isFieldUnvalid(formRegistration.name)"></span>
+                                <div class="form-group" ng-class="getFieldValidClasses(formEdition.name)">
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Nom" ng-model="formEditionData.name">
+                                    <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="isFieldValid(formEdition.name)"></span>
+                                    <span class="glyphicon glyphicon-warning-sign form-control-feedback" ng-show="isFieldUnvalid(formEdition.name)"></span>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-lg-offset-3 col-lg-6">
-                                <div class="form-group" ng-class="getFieldValidClasses(formRegistration.password)">
-                                    <input type="password" class="form-control" id="password" name="password" placeholder="Mot de passe" ng-model="formRegisterData.password" required>
-                                    <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="isFieldValid(formRegistration.password)"></span>
-                                    <span class="glyphicon glyphicon-warning-sign form-control-feedback" ng-show="isFieldUnvalid(formRegistration.password)"></span>
+                                <div class="form-group" ng-class="getFieldValidClasses(formEdition.oldPassword)">
+                                    <input type="password" class="form-control" id="oldPassword" name="oldPassword" placeholder="Ancien mot de passe" ng-model="formEditionData.oldPassword">
+                                    <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="isFieldValid(formEdition.oldPassword)"></span>
+                                    <span class="glyphicon glyphicon-warning-sign form-control-feedback" ng-show="isFieldUnvalid(formEdition.oldPassword)"></span>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-lg-offset-3 col-lg-6">
-                                <div class="form-group" ng-class="getFieldValidClasses(formRegistration.email)">
+                                <div class="form-group" ng-class="getFieldValidClasses(formEdition.password)">
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Nouveau mot de passe" ng-model="formEditionData.password">
+                                    <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="isFieldValid(formEdition.password)"></span>
+                                    <span class="glyphicon glyphicon-warning-sign form-control-feedback" ng-show="isFieldUnvalid(formEdition.password)"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-offset-3 col-lg-6">
+                                <div class="form-group" ng-class="getFieldValidClasses(formEdition.email)">
                                     <input type="email" class="form-control" id="email" name="email" placeholder="Email"
                                            ng-pattern="/[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}/"
-                                           ng-model="formRegisterData.email" required>
-                                    <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="isFieldValid(formRegistration.email)"></span>
-                                    <span class="glyphicon glyphicon-warning-sign form-control-feedback" ng-show="isFieldUnvalid(formRegistration.email)"></span>
+                                           ng-model="formEditionData.email">
+                                    <span class="glyphicon glyphicon-ok form-control-feedback" ng-show="isFieldValid(formEdition.email)"></span>
+                                    <span class="glyphicon glyphicon-warning-sign form-control-feedback" ng-show="isFieldUnvalid(formEdition.email)"></span>
                                 </div>
                             </div>
                         </div>
                     </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="row text-right">
+                        <button class="btn btn-success" ng-disabled="!formEdition.$valid" ng-click="editUser()">
+                            Enregistrer
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

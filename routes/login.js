@@ -1,4 +1,5 @@
 var authService = require('../services/authService');
+var HTTP_CONSTANTS = require('./http_constants');
 var express = require('express');
 var router = express.Router();
 
@@ -13,12 +14,12 @@ router.post('/', function(request, response) {
             if (token !== undefined) {
                 response.send(token);
             }else {
-                response.statusCode = 403;
+                response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
                 response.end();
             }
         });
     }else{
-        response.statusCode = 400;
+        response.statusCode = HTTP_CONSTANTS.FORM_INVALID;
         response.end();
     }
 });
@@ -28,7 +29,7 @@ router.get('/:token', function(request, response){
     var token = request.params.token;
 
     if(authService.getUser(token) === undefined)
-        response.statusCode = 403;
+        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
 
     response.end();
 });

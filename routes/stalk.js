@@ -1,9 +1,8 @@
 var express = require('express');
 var userService = require('../services/userService');
 var authService = require('../services/authService');
+var HTTP_CONSTANTS = require('./http_constants');
 var router = express.Router();
-
-//TODO SEVERAL ERROR CODES (MYSELF, ALREADY, NON EXIST)
 
 /* Stalk someone. */
 router.post('/:idUser', function(request, response) {
@@ -17,14 +16,14 @@ router.post('/:idUser', function(request, response) {
         var idUser = request.params.idUser;
         userService.stalk(user, idUser, function (err, result) {
             if (result === "ALREADY") {
-                response.statusCode = 406;
+                response.statusCode = HTTP_CONSTANTS.CONFLICT;
             }else if(result !== "OK"){
-                response.statusCode = 404;
+                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
             }
             response.end();
         });
     }else{
-        response.statusCode = 403;
+        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
     }
 });
@@ -42,16 +41,16 @@ router.delete('/:idUser', function(request, response) {
         userService.unstalk(user, idUser, function(err, result){
 
             if(result === "NOT"){
-                response.statusCode = 406;
+                response.statusCode = HTTP_CONSTANTS.CONFLICT;
             }
             else if(result !== "OK"){
-                response.statusCode = 404;
+                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
             }
             response.end();
         });
 
     }else{
-        response.statusCode = 403;
+        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
     }
 });

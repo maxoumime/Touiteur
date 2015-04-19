@@ -3,6 +3,7 @@ var async = require('async');
 var touiteService = require('../services/touiteService');
 var userService = require('../services/userService');
 var authService = require('../services/authService');
+var HTTP_CONSTANTS = require('./http_constants');
 var router = express.Router();
 
 router.get('/', function(request, response) {
@@ -51,13 +52,13 @@ router.get('/', function(request, response) {
                 });
 
             }else{
-                response.statusCode = 500;
+                response.statusCode = HTTP_CONSTANTS.REDIS_ACCESS_ERROR;
                 response.end();
             }
         });
 
     }else{
-        response.statusCode = 403;
+        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
     }
 });
@@ -73,13 +74,13 @@ router.get('/:idTouite', function(request, response) {
                 delete data.motsdiese;
                 response.send(data);
             }else {
-                response.statusCode = 404;
+                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
                 response.end();
             }
         });
 
     }else{
-        response.statusCode = 403;
+        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
     }
 
@@ -109,21 +110,21 @@ router.post('/', function(request, response){
                         delete touiteAdded.motsdiese;
                         response.send(touiteAdded);
                     } else {
-                        response.statusCode = 500;
+                        response.statusCode = HTTP_CONSTANTS.REDIS_ACCESS_ERROR;
                         response.end();
                     }
                 });
             }else{
-                response.statusCode = 509;
+                response.statusCode = HTTP_CONSTANTS.LENGTH_LIMIT_EXCEEDED;
                 response.end();
             }
         }else {
-            response.statusCode = 400;
+            response.statusCode = HTTP_CONSTANTS.FORM_INVALID;
             response.end();
     }
 
     }else{
-        response.statusCode = 403;
+        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
     }
 
@@ -145,19 +146,19 @@ router.delete('/:idTouite', function(request, response){
 
                 touiteService.delete(idTouite, function (result) {
                     if (!result)
-                        response.statusCode = 404;
+                        response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
 
                     response.end();
                 });
             }else{
-                response.statusCode = 401;
+                response.statusCode = HTTP_CONSTANTS.UNAUTHORISED_ACCESS;
                 response.end();
             }
 
         });
 
     }else{
-        response.statusCode = 403;
+        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
     }
 });
