@@ -12,23 +12,30 @@ router.get('/random', function(request, response){
     var token = request.query.token;
 
     //Si l'utilisateur est connecté
-    if(authService.isConnectedUser(token))
+    authService.isConnectedUser(token, function(exists){
 
-        //On récupère un utilisateur aléatoire
-        userService.getRandom(authService.getUser(token), function(random){
+        if(exists){
 
-            //S'il y en a bien un à afficher, en l'envoie
-            if(random !== null)
-                response.send(random);
-            else{
-                response.statusCode = HTTP_CONSTANTS.NO_RESULT;
-                response.end();
-            }
-        });
-    else{
-        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
-        response.end();
-    }
+            authService.getUser(token, function(user){
+                //On récupère un utilisateur aléatoire
+                userService.getRandom(user, function(random){
+
+                    //S'il y en a bien un à afficher, en l'envoie
+                    if(random !== null)
+                        response.send(random);
+                    else{
+                        response.statusCode = HTTP_CONSTANTS.NO_RESULT;
+                        response.end();
+                    }
+                });
+            });
+
+        }else{
+            response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
+            response.end();
+        }
+    });
+
 });
 
 /* Récupération de l'utilisateur connecté */
@@ -38,39 +45,48 @@ router.get('/', function(request, response){
     var token = request.query.token;
 
     //Si l'utilisateur est connecté
-    if(token !== undefined && authService.isConnectedUser(token)){
+    if(token !== undefined){
 
-        //Récupération du username
-        var idUser = authService.getUser(token);
+        authService.isConnectedUser(token, function(isConnected){
 
-        //Récupération de l'utilisateur
-        userService.getOne(idUser, function(err, data){
+            if(isConnected){
 
-            //Si l'utilisateur existe
-            if(data !== null){
+                //Récupération du username
+                authService.getUser(token, function(idUser){
 
-                //Suppression du mot de passe, on ne veut pas l'envoyer au client !
-                delete data.password;
+                    //Récupération de l'utilisateur
+                    userService.getOne(idUser, function(err, data){
 
-                //Si les différents tableaux sont présents avec l'utilisateur, on les parse
-                if(data.idTouites !== undefined)
-                    data.idTouites = JSON.parse(data.idTouites);
+                        //Si l'utilisateur existe
+                        if(data !== null){
 
-                if(data.idStalkers !== undefined)
-                    data.idStalkers = JSON.parse(data.idStalkers);
+                            //Suppression du mot de passe, on ne veut pas l'envoyer au client !
+                            delete data.password;
 
-                if(data.idStalking !== undefined)
-                    data.idStalking = JSON.parse(data.idStalking);
+                            //Si les différents tableaux sont présents avec l'utilisateur, on les parse
+                            if(data.idTouites !== undefined)
+                                data.idTouites = JSON.parse(data.idTouites);
 
-                //Envoi de l'utilisateur
-                response.send(data);
+                            if(data.idStalkers !== undefined)
+                                data.idStalkers = JSON.parse(data.idStalkers);
+
+                            if(data.idStalking !== undefined)
+                                data.idStalking = JSON.parse(data.idStalking);
+
+                            //Envoi de l'utilisateur
+                            response.send(data);
+                        }else{
+                            response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+                            response.end();
+                        }
+
+                    });
+                });
             }else{
-                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+                response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
                 response.end();
             }
-
         });
-
     }else{
         response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
@@ -85,34 +101,42 @@ router.get('/:id', function(request, response){
     var token = request.query.token;
 
     //Si l'utilisateur est connecté
-    if(token !== undefined && authService.isConnectedUser(token)){
+    if(token !== undefined){
 
-        //Récupération de l'ID de l'utilisateur
-        var idUser = request.params.id;
+        authService.isConnectedUser(token, function(isConnected){
 
-        //On récupère l'utilisateur
-        userService.getOne(idUser, function(err, data){
+            if(isConnected){
+                //Récupération de l'ID de l'utilisateur
+                var idUser = request.params.id;
 
-            //Si l'utilisateur existe
-            if(data !== null){
+                //On récupère l'utilisateur
+                userService.getOne(idUser, function(err, data){
 
-                //Suppression du mot de passe, on ne veut pas l'envoyer au client
-                delete data.password;
+                    //Si l'utilisateur existe
+                    if(data !== null){
 
-                //Si les différents tableaux sont présents avec l'utilisateur, on les parse
-                if(data.idTouites !== undefined)
-                    data.idTouites = JSON.parse(data.idTouites);
+                        //Suppression du mot de passe, on ne veut pas l'envoyer au client
+                        delete data.password;
 
-                if(data.idStalkers !== undefined)
-                    data.idStalkers = JSON.parse(data.idStalkers);
+                        //Si les différents tableaux sont présents avec l'utilisateur, on les parse
+                        if(data.idTouites !== undefined)
+                            data.idTouites = JSON.parse(data.idTouites);
 
-                if(data.idStalking !== undefined)
-                    data.idStalking = JSON.parse(data.idStalking);
+                        if(data.idStalkers !== undefined)
+                            data.idStalkers = JSON.parse(data.idStalkers);
 
-                //On renvoie l'utilisateur
-                response.send(data);
+                        if(data.idStalking !== undefined)
+                            data.idStalking = JSON.parse(data.idStalking);
+
+                        //On renvoie l'utilisateur
+                        response.send(data);
+                    }else{
+                        response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+                        response.end();
+                    }
+                });
             }else{
-                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+                response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
                 response.end();
             }
         });
@@ -128,16 +152,24 @@ router.get('/touites/:idUser', function(request, response){
 
     var token = request.query.token;
 
-    if(token !== undefined && authService.isConnectedUser(token)){
+    if(token !== undefined){
 
-        var idUser = request.params.idUser;
+        authService.isConnectedUser(token, function(isConnected){
 
-        userService.getTouites(idUser, function(touitesId){
+            if(isConnected){
+                var idUser = request.params.idUser;
 
-            if(touitesId !== null){
-                response.send(touitesId);
+                userService.getTouites(idUser, function(touitesId){
+
+                    if(touitesId !== null){
+                        response.send(touitesId);
+                    }else{
+                        response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+                        response.end();
+                    }
+                });
             }else{
-                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+                response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
                 response.end();
             }
         });
@@ -199,57 +231,67 @@ router.put('/', function(request, response){
     var token = request.body.token;
 
     //Si l'utilisateur est connecté
-    if(token !== undefined && authService.isConnectedUser(token)){
+    if(token !== undefined){
 
-        //Récupération du username de l'utilisateur connecté
-        var user = authService.getUser(token);
-        var newUser = request.body;
+        authService.isConnectedUser(token, function(isConnected){
 
-        //Récupération de l'utilisateur
-        userService.getOne(user, function(err, userDB){
+            if(isConnected){
+                //Récupération du username de l'utilisateur connecté
+                authService.getUser(token, function(user){
 
-            //Si l'utilisateur existe bien
-            if(userDB !== null){
+                    var newUser = request.body;
 
-                var mergedUser = userDB;
+                    //Récupération de l'utilisateur
+                    userService.getOne(user, function(err, userDB){
 
-                //Merge du nom de l'utilisateur si un nouveau nom est spécifié
-                mergedUser.name  = newUser.name !== undefined  && newUser.name > 0 ? newUser.name : userDB.name;
+                        //Si l'utilisateur existe bien
+                        if(userDB !== null){
 
-                //Si un email a été changé, et qu'il est valide, on le récupère
-                if(newUser.email !== undefined)
-                    if(isEmailValid(newUser.email))
-                        mergedUser.email = newUser.email !== undefined ? newUser.email : userDB.email;
-                    else{
-                        response.statusCode = HTTP_CONSTANTS.INVALID_EMAIL;
-                        response.end();
-                        return;
-                    }
+                            var mergedUser = userDB;
 
-                //Si l'ancien mot de passe a été spécifié
-                if(newUser.oldPassword !== undefined) {
+                            //Merge du nom de l'utilisateur si un nouveau nom est spécifié
+                            mergedUser.name  = newUser.name !== undefined && newUser.name.length > 0 ? newUser.name : userDB.name;
 
-                    //On le chiffre pour le comparer
-                    var encryptedOldPassword = authService.encrypt(newUser.oldPassword);
+                            //Si un email a été changé, et qu'il est valide, on le récupère
+                            if(newUser.email !== undefined)
+                                if(isEmailValid(newUser.email))
+                                    mergedUser.email = newUser.email !== undefined ? newUser.email : userDB.email;
+                                else{
+                                    response.statusCode = HTTP_CONSTANTS.INVALID_EMAIL;
+                                    response.end();
+                                    return;
+                                }
 
-                    //Si le mot de passe est bon, on récupère le nouveau mot de passe chiffré
-                    if( encryptedOldPassword === userDB.password )
-                        mergedUser.password = authService.encrypt(newUser.password);
-                    else{
-                        response.statusCode = HTTP_CONSTANTS.UNAUTHORISED_ACCESS;
-                        response.end();
-                        return;
-                    }
-                }
+                            //Si l'ancien mot de passe a été spécifié
+                            if(newUser.oldPassword !== undefined) {
 
-                //Mise à jour de l'utilisateur avec les nouvelles infos, puis renvoi
-                userService.update(user, mergedUser, function(){
-                    delete mergedUser.password;
-                    response.send(mergedUser);
+                                //On le chiffre pour le comparer
+                                var encryptedOldPassword = authService.encrypt(newUser.oldPassword);
+
+                                //Si le mot de passe est bon, on récupère le nouveau mot de passe chiffré
+                                if( encryptedOldPassword === userDB.password )
+                                    mergedUser.password = authService.encrypt(newUser.password);
+                                else{
+                                    response.statusCode = HTTP_CONSTANTS.UNAUTHORISED_ACCESS;
+                                    response.end();
+                                    return;
+                                }
+                            }
+
+                            //Mise à jour de l'utilisateur avec les nouvelles infos, puis renvoi
+                            userService.update(user, mergedUser, function(){
+                                delete mergedUser.password;
+                                response.send(mergedUser);
+                            });
+
+                        }else{
+                            response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+                            response.end();
+                        }
+                    });
                 });
-
             }else{
-                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+                response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
                 response.end();
             }
         });
@@ -268,42 +310,51 @@ router.delete('/', function(request, response){
     var token = request.query.token;
 
     //Si l'utilisateur est connecté
-    if(token !== undefined && authService.isConnectedUser(token)) {
+    if(token !== undefined) {
 
-        //Récupération du username de l'utilisateur connecté
-        var user = authService.getUser(token);
+        authService.isConnectedUser(token, function(isConnected){
 
-        //Récupération de l'utilisateur
-        userService.getOne(user, function(me){
+            if(isConnected){
+                //Récupération du username de l'utilisateur connecté
+                authService.getUser(token, function(user){
 
-            //Si l'utilisateur existe
-            if(me !== null){
+                    //Récupération de l'utilisateur
+                    userService.getOne(user, function(me){
 
-                //Suppression de tous les touites de l'utilisateur
-                var touites = me.idTouites !== undefined ? JSON.parse(me.idTouites) : [];
-                for(var touiteIndex in touites)
-                    touiteService.delete(touites[touiteIndex], function(){});
+                        //Si l'utilisateur existe
+                        if(me !== null){
 
-                //"Un-stalk" de ses stalkers
-                var stalkers = me.idStalkers !== undefined ? JSON.parse(me.idStalkers) : [];
-                for(var stalkerIndex in stalkers)
-                    userService.unstalk(stalkers[stalkerIndex], user, function(){});
+                            //Suppression de tous les touites de l'utilisateur
+                            var touites = me.idTouites !== undefined ? JSON.parse(me.idTouites) : [];
+                            for(var touiteIndex in touites)
+                                touiteService.delete(touites[touiteIndex], function(){});
 
-                //"Un-stalk" de ses stalking
-                var stalking = me.idStalking !== undefined ? JSON.parse(me.idStalking) : [];
-                for(var stalkingIndex in stalking)
-                    userService.unstalk(user, stalking[stalkingIndex], function(){});
+                            //"Un-stalk" de ses stalkers
+                            var stalkers = me.idStalkers !== undefined ? JSON.parse(me.idStalkers) : [];
+                            for(var stalkerIndex in stalkers)
+                                userService.unstalk(stalkers[stalkerIndex], user, function(){});
+
+                            //"Un-stalk" de ses stalking
+                            var stalking = me.idStalking !== undefined ? JSON.parse(me.idStalking) : [];
+                            for(var stalkingIndex in stalking)
+                                userService.unstalk(user, stalking[stalkingIndex], function(){});
+                        }
+
+                    });
+
+                    //Suppression de l'utilsateur
+                    userService.delete(user, function(result){
+
+                        if(!result)
+                            response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+
+                        response.end();
+                    });
+                });
+            }else{
+                response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
+                response.end();
             }
-
-        });
-
-        //Suppression de l'utilsateur
-        userService.delete(user, function(result){
-
-            if(!result)
-                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
-
-            response.end();
         });
 
     }else{
@@ -339,7 +390,7 @@ function isUserValid(user){
     valid &= user.id !== undefined;
     valid &= user.name !== undefined;
     valid &= user.password !== undefined;
-    valid &= isEmailValid(user.email);
+    valid &= user.email !== undefined;
 
     return valid;
 }

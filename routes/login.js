@@ -40,10 +40,13 @@ router.get('/:token', function(request, response){
     var token = request.params.token;
 
     //Si le token n'est pas associé à un user, on renvoie une erreur
-    if(authService.getUser(token) === undefined)
-        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
+    authService.getUser(token, function(user){
 
-    response.end();
+        if(user === undefined)
+            response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
+
+        response.end();
+    });
 });
 
 function isFormOK(data){

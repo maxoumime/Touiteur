@@ -11,24 +11,26 @@ router.get('/random', function(request, response){
     var token = request.query.token;
 
     //Si le user est connecté
-    if(authService.isConnectedUser(token))
+    authService.isConnectedUser(token, function(isConnected){
+        if(isConnected) {
 
-        //On récupère un mot-dièse random
-        motdieseService.getRandom(function(random){
+            //On récupère un mot-dièse random
+            motdieseService.getRandom(function (random) {
 
-            //Si l'on récupère un mot-dièse random, on le renvoie
-            if(random !== null)
-                response.send(random);
-            //Sinon on renvoie une erreur
-            else{
-                response.statusCode = HTTP_CONSTANTS.NO_RESULT;
-                response.end();
-            }
-        });
-    else{
-        response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
-        response.end();
-    }
+                //Si l'on récupère un mot-dièse random, on le renvoie
+                if (random !== null)
+                    response.send(random);
+                //Sinon on renvoie une erreur
+                else {
+                    response.statusCode = HTTP_CONSTANTS.NO_RESULT;
+                    response.end();
+                }
+            });
+        }else{
+            response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
+            response.end();
+        }
+    });
 });
 
 /* Récupération des touites correspondant au mot-dièse X */
@@ -42,18 +44,20 @@ router.get('/:motdiese', function(request, response) {
 
     //Si l'on a un mot-dièse
     if(motdiese !== undefined){
+
         //Si le user est connecté
-        if(authService.isConnectedUser(token)) {
+        authService.isConnectedUser(token, function(isConnected){
 
-            //Récupération des touites par mot-dièse en passant par le service, puis renvoi
-            motdieseService.getTouitesId(motdiese, function (err, touitesId) {
-                response.send(touitesId);
-            });
-        }else{
-            response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
-            response.end();
-        }
-
+            if(isConnected) {
+                //Récupération des touites par mot-dièse en passant par le service, puis renvoi
+                motdieseService.getTouitesId(motdiese, function (err, touitesId) {
+                    response.send(touitesId);
+                });
+            }else{
+                response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
+                response.end();
+            }
+        });
     }else{
         response.statusCode = HTTP_CONSTANTS.FORM_INVALID;
         response.end();

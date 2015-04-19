@@ -83,6 +83,7 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
         userService.getUser($rootScope.userConnected.id).success(function(data, status){
 
             $scope.user = data;
+
         });
     };
 

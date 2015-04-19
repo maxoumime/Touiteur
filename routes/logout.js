@@ -13,13 +13,16 @@ router.post('/', function(request, response) {
     if(token !== undefined){
 
         //On supprime le token, s'il n'existe pas, on renvoie une erreur
-        if(!authService.clearToken(token))
-            response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+        authService.clearToken(token, function(exists){
+            if(!exists)
+               response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+            response.end();
+        });
 
-    }else response.statusCode = HTTP_CONSTANTS.FORM_INVALID;
-
-    response.end();
-
+    }else {
+        response.statusCode = HTTP_CONSTANTS.FORM_INVALID;
+        response.end();
+    }
 });
 
 module.exports = router;

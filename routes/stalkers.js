@@ -9,19 +9,26 @@ router.get('/:idUser', function(request, response) {
 
     var token = request.query.token;
 
-    if(token !== undefined && authService.isConnectedUser(token)) {
+    if(token !== undefined){
 
-        var idUser = request.params.idUser;
+        authService.isConnectedUser(token, function(isConnected){
 
-        userService.getStalkers(idUser, function(result){
-            if(result !== undefined)
-                response.send(result);
-            else{
-                response.statusCode = HTTP_CONSTANTS.REDIS_ACCESS_ERROR;
+            if(isConnected){
+                var idUser = request.params.idUser;
+
+                userService.getStalkers(idUser, function(result){
+                    if(result !== undefined)
+                        response.send(result);
+                    else{
+                        response.statusCode = HTTP_CONSTANTS.REDIS_ACCESS_ERROR;
+                        response.end();
+                    }
+                });
+            }else{
+                response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
                 response.end();
             }
         });
-
     }else{
         response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();

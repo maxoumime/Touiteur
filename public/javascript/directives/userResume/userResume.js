@@ -12,8 +12,7 @@ app.directive('userResume', ['$modal', function ($modal) {
 
                 $scope.modal = $modal({scope: $scope, template: 'javascript/directives/userResume/templates/userListModal.html', html: true, show: true});
 
-            }
+            };
         },
         templateUrl: 'javascript/directives/userResume/templates/userResume.html'
-    };
-}]);
+}}]);

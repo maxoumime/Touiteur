@@ -1,11 +1,12 @@
 var userService = require('./userService');
+var db = require('./db/db');
+var setdb = require('./db/setdb');
 var crypto = require('crypto');
 var uuid = require('node-uuid');
 
-var tokenUser = {};
-
 var algorithm = 'aes256';
 var key = 'T0U!T&UR_!S_S&CUR&';
+var token_expiration = 3600; // 1h
 
 //NEVER DECRYPT
 
@@ -33,13 +34,17 @@ var authService = {
                     //Génération d'un token
                     var token = uuid.v4();
 
-                    //Ajout du token dans la liste
-                    tokenUser[token] = username;
+                    db.generateKey(db.TOKENS, token, function(generatedKey){
+                        //Ajout du token dans la liste
+                        db.clientSetter.set(generatedKey, username, function(){
 
-                    //Renvoi du token
-                    callback(token);
+                            //Renvoi du token
+                            callback(token);
+                        });
+                        db.clientSetter.expire(generatedKey, token_expiration);
+                    });
+
                 }else{
-
                     callback(undefined);
                 }
             }else{
@@ -51,10 +56,19 @@ var authService = {
     /**
      * Récupération d'un username par son token
      * @param token
-     * @returns {*}
+     * @param callback
      */
-    getUser: function(token){
-        return tokenUser[token];
+    getUser: function(token, callback){
+
+        db.generateKey(db.TOKENS, token, function(generatedKey){
+            db.clientGetter.get(generatedKey, function(err, data){
+
+                if(data === null)
+                    data = undefined;
+
+                callback(data);
+            });
+        });
     },
 
     /**
@@ -71,26 +85,36 @@ var authService = {
     /**
      * Supprime le token (déconnecte l'utilisateur) et renvoie si l'utilisateur existe ou non
      * @param token
+     * @param callback
      * @returns {*}
      */
-    clearToken: function(token){
+    clearToken: function(token, callback){
 
-        var exists = authService.isConnectedUser(token);
+        authService.isConnectedUser(token, function(exists){
 
-        if(exists)
-            delete tokenUser[token];
+            if(exists)
+                db.generateKey(db.TOKENS, token, function(generatedKey){
+                    db.clientSetter.del(generatedKey, function(){
 
-        return exists;
+                        callback(exists);
+                    });
+                });
+            else callback(exists);
+        });
     },
 
     /**
      * Permet de savoir si l'utilisateur est connecté ou non par un token
      * @param token
+     * @param callback
      * @returns {boolean}
      */
-    isConnectedUser: function(token){
+    isConnectedUser: function(token, callback){
 
-        return authService.getUser(token) !== undefined;
+        authService.getUser(token, function(result){
+
+            callback( result !== undefined);
+        });
     }
 };
 

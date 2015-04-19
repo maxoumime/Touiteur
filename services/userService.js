@@ -205,7 +205,7 @@ var userService = {
         if(callback === undefined) callback = nocallback;
 
         userService.getOne(keyMe, function(err, me){
-            if(me !== undefined)
+            if(me !== null)
                 callback( me.idStalking !== undefined ? JSON.parse(me.idStalking) : [] );
             else callback(undefined);
         });
@@ -222,7 +222,7 @@ var userService = {
         if(callback === undefined) callback = nocallback;
 
         userService.getOne(keyMe, function(err, me){
-            if(me !== undefined)
+            if(me !== null)
                 callback(me.idStalkers !== undefined ? JSON.parse(me.idStalkers) : [] );
             else callback(undefined);
         });

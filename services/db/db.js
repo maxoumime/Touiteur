@@ -21,6 +21,7 @@ clientGetter.on("connect", function(){
 var TOUITE = "touite";
 var USER = "user";
 var MOTDIESE = "motdiese";
+var TOKENS = "tokens";
 
 var db = {
 
@@ -28,6 +29,7 @@ var db = {
     TOUITE: TOUITE,
     USER: USER,
     MOTDIESE: MOTDIESE,
+    TOKENS: TOKENS,
 
     clientGetter: clientGetter,
     clientSetter: clientSetter,

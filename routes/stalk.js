@@ -9,18 +9,26 @@ router.post('/:idUser', function(request, response) {
 
     var token = request.body.token;
 
-    if(token !== undefined && authService.isConnectedUser(token)) {
+    if(token !== undefined){
 
-        var user = authService.getUser(token);
+        authService.isConnectedUser(token, function(isConnected){
 
-        var idUser = request.params.idUser;
-        userService.stalk(user, idUser, function (err, result) {
-            if (result === "ALREADY") {
-                response.statusCode = HTTP_CONSTANTS.CONFLICT;
-            }else if(result !== "OK"){
-                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+            if(isConnected)
+                authService.getUser(token, function(user){
+                    var idUser = request.params.idUser;
+                    userService.stalk(user, idUser, function (err, result) {
+                        if (result === "ALREADY") {
+                            response.statusCode = HTTP_CONSTANTS.CONFLICT;
+                        }else if(result !== "OK"){
+                            response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+                        }
+                        response.end();
+                    });
+                });
+            else{
+                response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
+                response.end();
             }
-            response.end();
         });
     }else{
         response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
@@ -33,22 +41,30 @@ router.delete('/:idUser', function(request, response) {
 
     var token = request.query.token;
 
-    if(token !== undefined && authService.isConnectedUser(token)) {
+    if(token !== undefined){
 
-        var user = authService.getUser(token);
+        authService.isConnectedUser(token, function(isConnected){
 
-        var idUser = request.params.idUser;
-        userService.unstalk(user, idUser, function(err, result){
+            if(isConnected){
+                authService.getUser(token, function(user){
 
-            if(result === "NOT"){
-                response.statusCode = HTTP_CONSTANTS.CONFLICT;
+                    var idUser = request.params.idUser;
+                    userService.unstalk(user, idUser, function(err, result){
+
+                        if(result === "NOT"){
+                            response.statusCode = HTTP_CONSTANTS.CONFLICT;
+                        }
+                        else if(result !== "OK"){
+                            response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+                        }
+                        response.end();
+                    });
+                });
+            }else{
+                response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
+                response.end();
             }
-            else if(result !== "OK"){
-                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
-            }
-            response.end();
         });
-
     }else{
         response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();

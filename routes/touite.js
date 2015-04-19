@@ -13,68 +13,76 @@ router.get('/', function(request, response) {
     var token = request.query.token;
 
     //Si l'utilisateur est connecté
-    if(token !== undefined && authService.isConnectedUser(token)) {
+    if(token !== undefined){
 
-        //Récupération du user
-        var user = authService.getUser(token);
+        authService.isConnectedUser(token, function(isConnected){
 
-        //Récupération des stalking du user
-        userService.getStalking(user, function(data){
+            if(isConnected){
+                //Récupération du user
+                authService.getUser(token, function(user){
 
-            //Si des stalking existent
-            if(data !== undefined){
+                    //Récupération des stalking du user
+                    userService.getStalking(user, function(data){
 
-                //On veut aussi avoir ses propres touites en plus des touites des stalkings
-                data.push(user);
+                        //Si des stalking existent
+                        if(data !== undefined){
 
-                var touitesId = [];
+                            //On veut aussi avoir ses propres touites en plus des touites des stalkings
+                            data.push(user);
 
-                //Pour chaque username présent (stalking + user connecté)
-                async.each(data, function(userId, callback){
+                            var touitesId = [];
 
-                    //On récupère leurs touites
-                    userService.getTouites(userId, function(touitesIdStalk){
+                            //Pour chaque username présent (stalking + user connecté)
+                            async.each(data, function(userId, callback){
 
-                        //Si l'utilisateur à déjà touité, on ajoute ses touites
-                        if(touitesIdStalk !== undefined)
-                            touitesId = touitesId.concat(touitesIdStalk);
+                                //On récupère leurs touites
+                                userService.getTouites(userId, function(touitesIdStalk){
 
-                        callback();
-                    });
-                }, function(err){
+                                    //Si l'utilisateur à déjà touité, on ajoute ses touites
+                                    if(touitesIdStalk !== undefined)
+                                        touitesId = touitesId.concat(touitesIdStalk);
 
-                    //Une fois fini...
+                                    callback();
+                                });
+                            }, function(err){
 
-                    //On récupère la page recherchée
-                    var pagination = request.query.pagination;
+                                //Une fois fini...
 
-                    //Le nombre de résultats par page
-                    var resultNbr = 10;
+                                //On récupère la page recherchée
+                                var pagination = request.query.pagination;
 
-                    //Si aucune page n'a été indiquée, on se base sur la première page
-                    if(pagination === undefined || isNaN(pagination))
-                        pagination = 0;
+                                //Le nombre de résultats par page
+                                var resultNbr = 10;
 
-                    //On récupère les touites pour les renvoyer
-                    var touitesRetour = touitesId;
+                                //Si aucune page n'a été indiquée, on se base sur la première page
+                                if(pagination === undefined || isNaN(pagination))
+                                    pagination = 0;
 
-                    //Si le nombre de touites excède le nombre de touites recherchés, on ne récupère que ceux qui nous intéressent
-                    if(touitesId.length > pagination * resultNbr)
-                        touitesRetour = touitesId.slice(pagination * resultNbr, (pagination * resultNbr)+resultNbr);
+                                //On récupère les touites pour les renvoyer
+                                var touitesRetour = touitesId;
 
-                    //On renvoie tous les touites, ainsi que le nombre de touites trouvés
-                    response.send({
-                        touites: touitesRetour,
-                        resultNbr: touitesId.length
+                                //Si le nombre de touites excède le nombre de touites recherchés, on ne récupère que ceux qui nous intéressent
+                                if(touitesId.length > pagination * resultNbr)
+                                    touitesRetour = touitesId.slice(pagination * resultNbr, (pagination * resultNbr)+resultNbr);
+
+                                //On renvoie tous les touites, ainsi que le nombre de touites trouvés
+                                response.send({
+                                    touites: touitesRetour,
+                                    resultNbr: touitesId.length
+                                });
+                            });
+
+                        }else{
+                            response.statusCode = HTTP_CONSTANTS.REDIS_ACCESS_ERROR;
+                            response.end();
+                        }
                     });
                 });
-
             }else{
-                response.statusCode = HTTP_CONSTANTS.REDIS_ACCESS_ERROR;
+                response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
                 response.end();
             }
         });
-
     }else{
         response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
@@ -88,19 +96,27 @@ router.get('/:idTouite', function(request, response) {
     var token = request.query.token;
 
     //Si l'utilisateur est connecté
-    if(token !== undefined && authService.isConnectedUser(token)) {
+    if(token !== undefined){
 
-        //Récupération du touite
-        touiteService.getOne(request.params.idTouite, function(err, data){
+        authService.isConnectedUser(token, function(isConnected){
 
-            //Si le touite est retrouvé
-            if(data != undefined) {
-                //On supprime les mots-dièse correspondants au touite, ils ne servent pas au client
-                delete data.motsdiese;
-                //Renvoi du touite
-                response.send(data);
-            }else {
-                response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+            if(isConnected){
+                //Récupération du touite
+                touiteService.getOne(request.params.idTouite, function(err, data){
+
+                    //Si le touite est retrouvé
+                    if(data != undefined) {
+                        //On supprime les mots-dièse correspondants au touite, ils ne servent pas au client
+                        delete data.motsdiese;
+                        //Renvoi du touite
+                        response.send(data);
+                    }else {
+                        response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+                        response.end();
+                    }
+                });
+            }else{
+                response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
                 response.end();
             }
         });
@@ -116,38 +132,45 @@ router.post('/', function(request, response){
     var token = request.body.token;
     delete request.body.token;
 
-    if(token !== undefined && authService.isConnectedUser(token)) {
+    if(token !== undefined){
 
-        var user = authService.getUser(token);
+        authService.isConnectedUser(token, function(isConnected){
 
-        var touite = request.body;
+            if(isConnected){
+                authService.getUser(token, function(user){
+                    var touite = request.body;
 
-        touite.authorId = user;
+                    touite.authorId = user;
 
-        if(isTouiteValid(touite)){
+                    if(isTouiteValid(touite)){
 
-            if(touite.content.length <= 140) {
+                        if(touite.content.length <= 140) {
 
-                touiteService.add(touite, function (touiteAdded) {
+                            touiteService.add(touite, function (touiteAdded) {
 
-                    if (touiteAdded !== undefined) {
+                                if (touiteAdded !== undefined) {
 
-                        delete touiteAdded.motsdiese;
-                        response.send(touiteAdded);
-                    } else {
-                        response.statusCode = HTTP_CONSTANTS.REDIS_ACCESS_ERROR;
+                                    delete touiteAdded.motsdiese;
+                                    response.send(touiteAdded);
+                                } else {
+                                    response.statusCode = HTTP_CONSTANTS.REDIS_ACCESS_ERROR;
+                                    response.end();
+                                }
+                            });
+                        }else{
+                            response.statusCode = HTTP_CONSTANTS.LENGTH_LIMIT_EXCEEDED;
+                            response.end();
+                        }
+                    }else {
+                        response.statusCode = HTTP_CONSTANTS.FORM_INVALID;
                         response.end();
                     }
                 });
             }else{
-                response.statusCode = HTTP_CONSTANTS.LENGTH_LIMIT_EXCEEDED;
+                response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
                 response.end();
             }
-        }else {
-            response.statusCode = HTTP_CONSTANTS.FORM_INVALID;
-            response.end();
-    }
-
+        });
     }else{
         response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
@@ -162,32 +185,42 @@ router.delete('/:idTouite', function(request, response){
     var token = request.query.token;
 
     //Si l'utilisateur est connecté
-    if(token !== undefined && authService.isConnectedUser(token)) {
+    if(token !== undefined){
 
-        //Récupération du user correspondant au token
-        var user = authService.getUser(token);
+        authService.isConnectedUser(token, function(isConnected){
 
-        //Récupération de l'ID du touite
-        var idTouite = request.params.idTouite;
+            if(isConnected){
+                //Récupération du user correspondant au token
+                authService.getUser(token, function(user){
 
-        //Récupération du touite
-        touiteService.getOne(idTouite, function(err, data){
+                    //Récupération de l'ID du touite
+                    var idTouite = request.params.idTouite;
 
-            //Si un touite est trouvé, et que l'utilisateur connecté en est bien l'auteur
-            if(data !== undefined && data !== null && data.authorId === user) {
+                    //Récupération du touite
+                    touiteService.getOne(idTouite, function(err, data){
 
-                //Suppression du touite
-                touiteService.delete(idTouite, function (result) {
-                    if (!result)
-                        response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+                        //Si un touite est trouvé, et que l'utilisateur connecté en est bien l'auteur
+                        if(data !== undefined && data !== null && data.authorId === user) {
 
-                    response.end();
+                            //Suppression du touite
+                            touiteService.delete(idTouite, function (result) {
+                                if (!result)
+                                    response.statusCode = HTTP_CONSTANTS.NOT_FOUND;
+
+                                response.end();
+                            });
+                        }else{
+                            response.statusCode = HTTP_CONSTANTS.UNAUTHORISED_ACCESS;
+                            response.end();
+                        }
+                    });
                 });
             }else{
-                response.statusCode = HTTP_CONSTANTS.UNAUTHORISED_ACCESS;
+                response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
                 response.end();
             }
         });
+
     }else{
         response.statusCode = HTTP_CONSTANTS.FORBIDDEN;
         response.end();
