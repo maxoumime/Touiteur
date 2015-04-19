@@ -23,6 +23,10 @@
             </div>
 
         </div>
+        <div class="row text-center" ng-show="userConnected.id === userRequested.id || userRequested === undefined">
+            <button class="btn btn-warning" ng-click="editModal()">Modifier</button>
+            <button class="btn btn-danger" ng-click="deleteModal()">Supprimer</button>
+        </div>
     </div>
 
     <div class="col-lg-offset-1 col-lg-8">

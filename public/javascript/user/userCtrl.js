@@ -2,7 +2,7 @@
  * Created by maxoumime on 13/04/2015.
  */
 
-userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeParams', 'userService', 'touiteTimelineService', function($scope, $rootScope, $location, $routeParams, userService, touiteTimelineService) {
+userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeParams', '$modal', 'userService', 'touiteTimelineService', function($scope, $rootScope, $location, $routeParams, $modal, userService, touiteTimelineService) {
 
     if($rootScope.token === undefined) {
         $location.path('/login');
@@ -78,6 +78,37 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
 
     };
 
+    $scope.editModal = function(){
+
+        $scope.opennedModal.hide();
+    };
+
+    $scope.deleteModal = function(){
+
+        $scope.opennedModal = $modal(
+            {
+                scope: $scope,
+                template: 'javascript/user/templates/deleteModal.html',
+                html: true,
+                show: true
+            }
+        );
+    };
+
+    $scope.deleteUser = function(){
+
+        $scope.opennedModal.hide();
+        delete $scope.opennedModal;
+
+        userService.delete().success(function(data, status){
+
+            toastr.success("Utilisateur supprimé !");
+            delete $rootScope.token;
+            delete $rootScope.userConnected;
+            delete sessionStorage[SESSION_NAME];
+            $location.path('/login');
+        });
+    };
 
     if($routeParams.user !== undefined) {
         $scope.usernameRequested = $routeParams.user;
@@ -95,7 +126,6 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
     }
 
     $scope.userRequested = {};
-
 
 
 }]);

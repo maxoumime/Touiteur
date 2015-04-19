@@ -209,7 +209,7 @@ router.put('/', function(request, response){
 
 router.delete('/', function(request, response){
 
-    var token = request.body.token;
+    var token = request.query.token;
 
     if(token !== undefined && authService.isConnectedUser(token)) {
 

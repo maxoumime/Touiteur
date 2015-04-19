@@ -40,6 +40,24 @@ userModule.factory('userService', ['$http', '$location', '$rootScope', function 
             });
     };
 
+    factory.delete = function(){
+
+        return $http.delete(HOST + '/user?token='+$rootScope.token)
+
+            .error(function(data, status){
+
+                if(status === 403){
+                    toastr.error("Votre connexion a expiré", "Non authorisé");
+                    delete $rootScope.token;
+                    $location.path('/login');
+                }else if(status === 404){
+                    toastr.error("Utilisateur introuvable");
+                    $location.path('/');
+                }
+                else toastr.error("Veuillez réessayer ultérieurement.", "Erreur de connexion");
+            });
+    };
+
     factory.stalk = function(username){
 
         return $http.post(HOST + '/stalk/'+username, {token: $rootScope.token})

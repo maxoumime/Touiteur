@@ -1,0 +1,23 @@
+<div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" ng-click="$hide()">&times;</button>
+                <h4 class="modal-title">
+                    Supprimer l'utilisateur ?
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="row text-center">
+                    <h4>
+                        Voulez vous vraiment supprimer l'utilisateur ?
+                    </h4>
+                    <div class="row text-center">
+                        <button class="btn btn-success" ng-click="deleteUser()">Oui</button>
+                        <button class="btn btn-danger" ng-click="$hide()">Non</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
