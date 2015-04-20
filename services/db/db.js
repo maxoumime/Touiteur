@@ -3,8 +3,8 @@ var async = require('async');
 var uuid = require('node-uuid');
 
 var port = "6379";
-var host = "192.168.1.21";
-//var host = "127.0.0.1";
+//var host = "192.168.1.21";
+var host = "127.0.0.1";
 
 var clientSetter = redis.createClient(port, host);
 var clientGetter = redis.createClient(port, host);

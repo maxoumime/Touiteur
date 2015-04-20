@@ -33,6 +33,17 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$location', '$route', 'logi
 
     $rootScope.pagination = 10;
 
+    /**
+     * Recharge l'utilisateur connecté
+     */
+    $rootScope.reloadConnectedUser = function(){
+        userService.getUser().success(function(dataUser, statusUser){
+
+            $rootScope.userConnected = dataUser;
+
+        });
+    };
+
     //Si un token est présent dans le navigateur
     if(sessionStorage[SESSION_NAME] !== undefined){
 
@@ -42,11 +53,7 @@ app.controller('MainCtrl', ['$scope', '$rootScope', '$location', '$route', 'logi
             .success(function(data, status){
                 if(status === 200) {
                     $rootScope.token = sessionStorage[SESSION_NAME];
-                    userService.getUser().success(function(dataUser, statusUser){
-
-                        $rootScope.userConnected = dataUser;
-
-                    });
+                    $rootScope.reloadConnectedUser();
                 }
             })
             .error(function(data, status){

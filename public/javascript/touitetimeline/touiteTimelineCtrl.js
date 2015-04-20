@@ -31,6 +31,7 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
 
             $scope.getTouites();
             $scope.getUser();
+            $rootScope.reloadConnectedUser();
         });
 
     };
@@ -72,6 +73,7 @@ touitetimelineModule.controller('TouitetimelineCtrl', ['$scope', '$rootScope', '
             toastr.success("Touite supprimé !");
             $scope.getTouites();
             $scope.getUser();
+            $rootScope.reloadConnectedUser();
         });
     };
 

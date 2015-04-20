@@ -76,10 +76,7 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
 
             getUser($scope.usernameRequested);
 
-            userService.getUser($rootScope.userConnected.id).success(function(dataUser, status){
-
-                $rootScope.userConnected = dataUser;
-            });
+            $rootScope.reloadConnectedUser();
         });
     };
 
@@ -92,10 +89,7 @@ userModule.controller('UserCtrl', ['$scope', '$rootScope', '$location', '$routeP
 
             getUser($scope.usernameRequested);
 
-            userService.getUser($rootScope.userConnected.id).success(function(dataUser, status){
-
-                $rootScope.userConnected = dataUser;
-            });
+            $rootScope.reloadConnectedUser();
         });
 
     };
