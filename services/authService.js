@@ -1,6 +1,5 @@
 var userService = require('./userService');
 var db = require('./db/db');
-var setdb = require('./db/setdb');
 var crypto = require('crypto');
 var uuid = require('node-uuid');
 

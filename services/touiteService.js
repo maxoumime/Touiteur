@@ -81,7 +81,7 @@ var touiteService = {
      * @param key
      * @param callback
      */
-    delete: function(key, callback){
+    tdelete: function(key, callback){
 
         if(callback === undefined) callback = nocallback;
 
