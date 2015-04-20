@@ -327,17 +327,17 @@ router.delete('/', function(request, response){
                             //Suppression de tous les touites de l'utilisateur
                             var touites = me.idTouites !== undefined ? JSON.parse(me.idTouites) : [];
                             for(var touiteIndex in touites)
-                                touiteService.delete(touites[touiteIndex], function(){});
+                                touiteService.delete(touites[touiteIndex]);
 
                             //"Un-stalk" de ses stalkers
                             var stalkers = me.idStalkers !== undefined ? JSON.parse(me.idStalkers) : [];
                             for(var stalkerIndex in stalkers)
-                                userService.unstalk(stalkers[stalkerIndex], user, function(){});
+                                userService.unstalk(stalkers[stalkerIndex], user);
 
                             //"Un-stalk" de ses stalking
                             var stalking = me.idStalking !== undefined ? JSON.parse(me.idStalking) : [];
                             for(var stalkingIndex in stalking)
-                                userService.unstalk(user, stalking[stalkingIndex], function(){});
+                                userService.unstalk(user, stalking[stalkingIndex]);
                         }
 
                     });

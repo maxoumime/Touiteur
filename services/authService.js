@@ -41,6 +41,8 @@ var authService = {
                             //Renvoi du token
                             callback(token);
                         });
+
+                        //Expiration du token
                         db.clientSetter.expire(generatedKey, token_expiration);
                     });
 
