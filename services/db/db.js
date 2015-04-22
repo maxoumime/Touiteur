@@ -1,6 +1,7 @@
 var redis = require('redis');
 var async = require('async');
 var uuid = require('node-uuid');
+var winston = require('winston');
 
 var port = "6379";
 //var host = "192.168.1.21";
@@ -10,11 +11,11 @@ var clientSetter = redis.createClient(port, host);
 var clientGetter = redis.createClient(port, host);
 
 clientSetter.on("connect", function(){
-    console.log("SETTER CONNECTED");
+    winston.info("Connexion du clientGetter sur " + host + ':' + port);
 });
 
 clientGetter.on("connect", function(){
-    console.log("GETTER CONNECTED");
+    winston.info("Connexion du clientSetter sur " + host + ':' + port);
 });
 
 //"TABLES"
@@ -67,7 +68,16 @@ var db = {
                     clientSetter.srem(type, db.getSuffixKey(generatedKey), callback)
                 }
             ], function (err, results) {
-                callback(results[0] == 1 && results[1] == 1);
+
+                if(results[0] == 1 && results[1] == 1) {
+                    winston.info("Suppression " + generatedKey);
+                    callback(true);
+                }else {
+                    winston.error("Suppression " + generatedKey);
+                    winston.error("Suppression clef:" + results[0] + "|"+type+":"+results[1])
+                    callback(false);
+                }
+
             });
         });
     },
@@ -99,8 +109,9 @@ var db = {
 
     exitClients: function(){
 
-
+        winston.info("Déconnexion du clientGetter");
         clientGetter.end();
+        winston.info("Déconnexion du clientSetter");
         clientSetter.end();
 
 

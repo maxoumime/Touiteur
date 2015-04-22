@@ -2,6 +2,7 @@ var userService = require('./userService');
 var db = require('./db/db');
 var crypto = require('crypto');
 var uuid = require('node-uuid');
+var winston = require('winston');
 
 var algorithm = 'aes256';
 var key = 'T0U!T&UR_!S_S&CUR&';
@@ -37,6 +38,7 @@ var authService = {
                         //Ajout du token dans la liste
                         db.clientSetter.set(generatedKey, username, function(){
 
+                            winston.info("User " + username + " connecté: " + token);
                             //Renvoi du token
                             callback(token);
                         });
@@ -97,6 +99,7 @@ var authService = {
                 db.generateKey(db.TOKENS, token, function(generatedKey){
                     db.clientSetter.del(generatedKey, function(){
 
+                        winston.info("Token " + token + " supprimé");
                         callback(exists);
                     });
                 });

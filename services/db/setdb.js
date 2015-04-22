@@ -1,5 +1,6 @@
 var db = require('./db');
 var async = require('async');
+var winston = require('winston');
 
 var setDb = {
 
@@ -52,8 +53,12 @@ var setDb = {
                 }
             ], function(err, results){
                 if(results[0] == '1' && results[1] == "1"){
+                    winston.info("Ajout du set " + generatedKey);
                     callback(data);
-                }else callback(undefined);
+                }else {
+                    winston.error("Ajout set:" + results[0] + '|' + type + ":" + results[1]);
+                    callback(undefined);
+                }
             });
         });
 
@@ -71,10 +76,14 @@ var setDb = {
         db.generateKey(type, key, function(generatedKey){
 
             if(data.length > 0){
+                winston.info("Mise a jour du set " + generatedKey);
                 db.clientSetter.del(generatedKey, callback);
                 db.clientSetter.sadd(generatedKey, data, callback);
             }
-            else setDb.delete(type, key, callback);
+            else {
+                winston.info("Suppression du set " + generatedKey + " car vide");
+                setDb.delete(type, key, callback);
+            }
         });
     },
 

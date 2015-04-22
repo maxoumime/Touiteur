@@ -1,6 +1,7 @@
 var db = require('./db/db');
 var hashdb = require('./db/hashdb');
 var async = require('async');
+var winston = require('winston');
 
 var userService = {
 
@@ -43,6 +44,7 @@ var userService = {
 
         data.registrationDate = Date.now();
 
+        winston.info("Ajout du user " + data.id);
         return hashdb.add(db.USER, data, callback, data.id);
     },
 
@@ -57,6 +59,7 @@ var userService = {
 
         if(callback === undefined) callback = nocallback;
 
+        winston.info("Mise à jour du user " + key);
         return hashdb.update(db.USER, key, data, callback);
     },
 
@@ -69,6 +72,7 @@ var userService = {
 
         if(callback === undefined) callback = nocallback;
 
+        winston.info("Suppression du user " + key);
         hashdb.delete(db.USER, key, callback);
     },
 
@@ -127,6 +131,8 @@ var userService = {
                     //Stringify du tableau pour stockage
                     target.idStalkers = JSON.stringify(stalkers);
 
+                    winston.info("Stalk de " + me.id + " vers " + target.id);
+
                     //Mise à jour des deux utilisateurs
                     userService.update(me.id, me, callback);
                     userService.update(target.id, target, callback);
@@ -182,6 +188,8 @@ var userService = {
                     stalkers.splice(stalkers.indexOf(me.id), 1);
 
                     target.idStalkers = JSON.stringify(stalkers);
+
+                    winston.info("Unstalk de " + me.id + " vers " + target.id);
 
                     userService.update(me.id, me, callback);
                     userService.update(target.id, target, callback);

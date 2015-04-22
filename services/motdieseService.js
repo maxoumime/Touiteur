@@ -1,5 +1,6 @@
 var db = require('./db/db');
 var setdb = require('./db/setdb');
+var winston = require('winston');
 
 var motdieseService = {
 
@@ -53,7 +54,10 @@ var motdieseService = {
 
         if(callback === undefined) callback = nocallback;
 
-        setdb.add(db.MOTDIESE, touiteId, callback, motDiese.toLowerCase());
+        motDiese = motDiese.toLowerCase();
+
+        winston.info("Ajout du motdiese " + motDiese);
+        setdb.add(db.MOTDIESE, touiteId, callback, motDiese);
     },
 
     /**
@@ -66,6 +70,8 @@ var motdieseService = {
         if(typeof data === 'string')
             motsdiese = motdieseService.extractMotsdiese(data);
         else motsdiese = data;
+
+        winston.info("Ajout des motsdiese " + motsdiese);
 
         for(var motdieseIndex in motsdiese)
             motdieseService.add(motsdiese[motdieseIndex], touiteId);
@@ -84,6 +90,7 @@ var motdieseService = {
 
                 idTouites.splice(idTouites.indexOf(idTouite), 1);
 
+                winston.info("Suppression du touite " + idTouite + " de " + motdiese);
                 setdb.update(db.MOTDIESE, motdiese, idTouites, callback);
 
             }else callback(undefined);

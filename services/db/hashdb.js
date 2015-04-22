@@ -1,5 +1,6 @@
 var db = require('./db');
 var async = require('async');
+var winston = require('winston');
 
 var hashDb = {
 
@@ -57,8 +58,12 @@ var hashDb = {
                 }
             ], function(err, results){
                 if(results[0] == 'OK' && results[1] == "1"){
+                    winston.info("Ajout du hash " + generatedKey);
                     callback(data);
-                }else callback(undefined);
+                }else {
+                    winston.error("Ajout hash:" + results[0] + '|' + type + ":" + results[1]);
+                    callback(undefined);
+                }
             });
         });
 
@@ -75,6 +80,7 @@ var hashDb = {
 
         db.generateKey(type, key, function(generatedKey){
 
+            winston.info("Mise à jour du hash " + generatedKey);
             db.clientSetter.hmset(generatedKey, data, callback);
         });
     },
