@@ -16,6 +16,7 @@
     "redis": "~0.12",
     "cors": "~2.5.3",
     "async": "~0.9",
-    "node-uuid": "~1.4"
+    "node-uuid": "~1.4",
+    "winston": "~1.0"
   }
 }

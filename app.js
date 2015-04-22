@@ -15,6 +15,7 @@ var stalk = require('./routes/stalk');
 var stalkers = require('./routes/stalkers');
 var stalking = require('./routes/stalking');
 
+var db = require('./services/db/db');
 
 var app = express();
 
@@ -68,5 +69,18 @@ app.use(function(err, req, res, next) {
   res.end();
 });
 
-
 module.exports = app;
+
+
+process.stdin.resume();
+
+function exitHandler() {
+    db.exitClients();
+    process.exit();
+}
+
+//Action à l'arrêt
+process.on('exit', exitHandler.bind(null));
+
+//Action au Ctrl+C
+process.on('SIGINT', exitHandler.bind(null));

@@ -21,7 +21,7 @@ clientGetter.on("connect", function(){
 var TOUITE = "touite";
 var USER = "user";
 var MOTDIESE = "motdiese";
-var TOKENS = "tokens";
+var TOKENS = "token";
 
 var db = {
 
@@ -95,6 +95,15 @@ var db = {
     getSuffixKey: function(generatedKey){
 
         return generatedKey.split(":")[1];
+    },
+
+    exitClients: function(){
+
+
+        clientGetter.end();
+        clientSetter.end();
+
+
     }
 };
 
